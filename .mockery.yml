@@ -7,3 +7,9 @@ packages:
     interfaces:
       Repository:
       Usecase:
+  github.com/ngoctrng/bookz/internal/book/usecases:
+    config:
+      dir: "internal/book/mocks"
+    interfaces:
+      Repository:
+      Usecase:
