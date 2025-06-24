@@ -1,0 +1,9 @@
+filename: "mocks.go"
+pkgname: "mocks"
+packages:
+  github.com/ngoctrng/bookz/internal/account/usecases:
+    config:
+      dir: "internal/account/mocks"
+    interfaces:
+      Repository:
+      Usecase:

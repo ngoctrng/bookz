@@ -1,0 +1,27 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  lint:
+    timeout-minutes: 10
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+    name: linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          version: v2.1
