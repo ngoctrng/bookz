@@ -10,8 +10,10 @@ test:
 	  -- -cover $$(go list ./... | grep -v -E "(cmd|testutil|tmp|mocks)"))
 
 local-dev:
-	docker compose --env-file ./.env -f ./tools/compose/docker-compose.yml down
 	docker compose --env-file ./.env -f ./tools/compose/docker-compose.yml up -d
+
+local-clean:
+	docker compose --env-file ./.env -f ./tools/compose/docker-compose.yml down
 
 lint:
 	golangci-lint run
