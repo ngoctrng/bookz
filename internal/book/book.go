@@ -1,6 +1,7 @@
 package book
 
 type Book struct {
+	ID          int
 	OwnerID     string
 	ISBN        string
 	Title       string
@@ -29,6 +30,7 @@ func (b *Book) AddBriefReview(review string) {
 }
 
 type BookInfo struct {
+	ID          int       `json:"id"`
 	ISBN        string    `json:"isbn"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
@@ -39,6 +41,6 @@ type BookInfo struct {
 }
 
 type BookOwner struct {
-	OwnerID  string `json:"owner_id"`
+	ID       string `json:"owner_id"`
 	Username string `json:"username"`
 }

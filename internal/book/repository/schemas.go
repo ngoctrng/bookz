@@ -41,3 +41,14 @@ func BookSchemaToDomain(s *BookSchema) *book.Book {
 		Year:        s.Year,
 	}
 }
+
+type BookInfoResult struct {
+	ISBN        string
+	Title       string
+	Description string
+	BriefReview string
+	Author      string
+	Year        int
+	OwnerID     string
+	Username    string
+}

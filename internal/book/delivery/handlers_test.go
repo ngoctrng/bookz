@@ -38,14 +38,14 @@ func TestCreateBookHandler(t *testing.T) {
 }
 
 func TestGetBookHandler(t *testing.T) {
-	bookObj := &book.Book{ISBN: "123", Title: "Go"}
+	b := &book.BookInfo{ID: 1, ISBN: "123", Title: "Go"}
 	uc := new(mocks.MockUsecase)
-	uc.EXPECT().Get("123").Return(bookObj, nil).Once()
+	uc.EXPECT().Get(1).Return(b, nil).Once()
 
 	h := delivery.NewHandler(uc)
-	c, rec := setupEchoConext("/books/123", nil)
-	c.SetParamNames("isbn")
-	c.SetParamValues("123")
+	c, rec := setupEchoConext("/books/1", nil)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
 
 	err := h.Get(c)
 
@@ -78,12 +78,12 @@ func TestUpdateBookHandler(t *testing.T) {
 
 func TestDeleteBookHandler(t *testing.T) {
 	uc := new(mocks.MockUsecase)
-	uc.EXPECT().Delete("123", "owner1").Return(nil).Once()
+	uc.EXPECT().Delete(1, "owner1").Return(nil).Once()
 
 	h := delivery.NewHandler(uc)
-	c, rec := setupEchoConext("/books/123", nil)
-	c.SetParamNames("isbn")
-	c.SetParamValues("123")
+	c, rec := setupEchoConext("/books/1", nil)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
 	c.Set("user_id", "owner1")
 
 	err := h.Delete(c)
@@ -95,8 +95,8 @@ func TestDeleteBookHandler(t *testing.T) {
 
 func TestListBooksHandler(t *testing.T) {
 	books := []*book.BookInfo{
-		{ISBN: "1", Title: "Book 1", Author: "Author 1", Year: 2021, Owner: book.BookOwner{OwnerID: "owner1"}},
-		{ISBN: "2", Title: "Book 2", Author: "Author 2", Year: 2022, Owner: book.BookOwner{OwnerID: "owner2"}},
+		{ISBN: "1", Title: "Book 1", Author: "Author 1", Year: 2021, Owner: book.BookOwner{ID: "owner1"}},
+		{ISBN: "2", Title: "Book 2", Author: "Author 2", Year: 2022, Owner: book.BookOwner{ID: "owner2"}},
 	}
 	uc := new(mocks.MockUsecase)
 	uc.EXPECT().List().Return(books, nil).Once()
@@ -113,13 +113,13 @@ func TestListBooksHandler(t *testing.T) {
 
 func TestBookHandlerErrors(t *testing.T) {
 	uc := new(mocks.MockUsecase)
-	uc.EXPECT().Get("404").Return(nil, errors.New("not found")).Once()
+	uc.EXPECT().Get(222).Return(nil, errors.New("not found")).Once()
 
 	h := delivery.NewHandler(uc)
 
-	c, _ := setupEchoConext("/books/404", nil)
-	c.SetParamNames("isbn")
-	c.SetParamValues("404")
+	c, _ := setupEchoConext("/books/222", nil)
+	c.SetParamNames("id")
+	c.SetParamValues("222")
 
 	err := h.Get(c)
 	assert.Error(t, err)

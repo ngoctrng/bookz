@@ -37,21 +37,21 @@ func TestCreateBook(t *testing.T) {
 }
 
 func TestGetBook(t *testing.T) {
-	b := &book.Book{ISBN: "isbn-001", Title: "Book Title"}
+	b := &book.BookInfo{ID: 1, ISBN: "isbn-001", Title: "Book Title"}
 	r := new(mocks.MockRepository)
 	svc := usecases.NewService(r)
 
-	t.Run("should get book by isbn", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(b, nil).Once()
-		got, err := svc.Get("isbn-001")
+	t.Run("should get book by id", func(t *testing.T) {
+		r.EXPECT().FindByID(1).Return(b, nil).Once()
+		got, err := svc.Get(1)
 		assert.NoError(t, err)
 		assert.Equal(t, b, got)
 		r.AssertExpectations(t)
 	})
 
 	t.Run("should return error if repo fails", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(nil, errors.New("db error")).Once()
-		got, err := svc.Get("isbn-001")
+		r.EXPECT().FindByID(1).Return(nil, errors.New("db error")).Once()
+		got, err := svc.Get(1)
 		assert.Error(t, err)
 		assert.Nil(t, got)
 		r.AssertExpectations(t)
@@ -59,12 +59,14 @@ func TestGetBook(t *testing.T) {
 }
 
 func TestUpdateBook(t *testing.T) {
-	origin := &book.Book{
-		OwnerID: "owner1",
-		ISBN:    "isbn-001",
-		Title:   "Old Title",
+	origin := &book.BookInfo{
+		ID:    1,
+		Owner: book.BookOwner{ID: "owner1"},
+		ISBN:  "isbn-001",
+		Title: "Old Title",
 	}
 	updated := &book.Book{
+		ID:      1,
 		OwnerID: "owner1",
 		ISBN:    "isbn-001",
 		Title:   "New Title",
@@ -73,7 +75,7 @@ func TestUpdateBook(t *testing.T) {
 	svc := usecases.NewService(r)
 
 	t.Run("should update book if owner matches", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(origin, nil).Once()
+		r.EXPECT().FindByID(1).Return(origin, nil).Once()
 		r.EXPECT().Update(updated).Return(nil).Once()
 		err := svc.Update(updated, "owner1")
 		assert.NoError(t, err)
@@ -81,7 +83,7 @@ func TestUpdateBook(t *testing.T) {
 	})
 
 	t.Run("should not update if owner does not match", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(origin, nil).Once()
+		r.EXPECT().FindByID(1).Return(origin, nil).Once()
 		err := svc.Update(updated, "other-owner")
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "permission")
@@ -89,7 +91,7 @@ func TestUpdateBook(t *testing.T) {
 	})
 
 	t.Run("should return error if repo fails", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(nil, errors.New("db error")).Once()
+		r.EXPECT().FindByID(1).Return(nil, errors.New("db error")).Once()
 		err := svc.Update(updated, "owner1")
 		assert.Error(t, err)
 		r.AssertExpectations(t)
@@ -97,33 +99,34 @@ func TestUpdateBook(t *testing.T) {
 }
 
 func TestDeleteBook(t *testing.T) {
-	b := &book.Book{
-		OwnerID: "owner1",
-		ISBN:    "isbn-001",
-		Title:   "Book Title",
+	b := &book.BookInfo{
+		ID:    1,
+		Owner: book.BookOwner{ID: "owner1"},
+		ISBN:  "isbn-001",
+		Title: "Book Title",
 	}
 	r := new(mocks.MockRepository)
 	svc := usecases.NewService(r)
 
 	t.Run("should delete book if owner matches", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(b, nil).Once()
-		r.EXPECT().Delete("isbn-001").Return(nil).Once()
-		err := svc.Delete("isbn-001", "owner1")
+		r.EXPECT().FindByID(1).Return(b, nil).Once()
+		r.EXPECT().Delete(1).Return(nil).Once()
+		err := svc.Delete(1, "owner1")
 		assert.NoError(t, err)
 		r.AssertExpectations(t)
 	})
 
 	t.Run("should not delete if owner does not match", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(b, nil).Once()
-		err := svc.Delete("isbn-001", "other-owner")
+		r.EXPECT().FindByID(1).Return(b, nil).Once()
+		err := svc.Delete(1, "other-owner")
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "permission")
 		r.AssertExpectations(t)
 	})
 
 	t.Run("should return error if repo fails", func(t *testing.T) {
-		r.EXPECT().FindByISBN("isbn-001").Return(nil, errors.New("db error")).Once()
-		err := svc.Delete("isbn-001", "owner1")
+		r.EXPECT().FindByID(1).Return(nil, errors.New("db error")).Once()
+		err := svc.Delete(1, "owner1")
 		assert.Error(t, err)
 		r.AssertExpectations(t)
 	})
@@ -131,8 +134,8 @@ func TestDeleteBook(t *testing.T) {
 
 func TestListBooks(t *testing.T) {
 	books := []*book.BookInfo{
-		{ISBN: "1", Title: "Book 1", Author: "Author 1", Year: 2021, Owner: book.BookOwner{OwnerID: "owner1"}},
-		{ISBN: "2", Title: "Book 2", Author: "Author 2", Year: 2022, Owner: book.BookOwner{OwnerID: "owner2"}},
+		{ID: 1, ISBN: "1", Title: "Book 1", Author: "Author 1", Year: 2021, Owner: book.BookOwner{ID: "owner1"}},
+		{ID: 2, ISBN: "2", Title: "Book 2", Author: "Author 2", Year: 2022, Owner: book.BookOwner{ID: "owner2"}},
 	}
 	r := new(mocks.MockRepository)
 	svc := usecases.NewService(r)

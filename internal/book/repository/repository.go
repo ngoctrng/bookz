@@ -20,40 +20,45 @@ func (r *Repository) Save(b *book.Book) error {
 	return r.db.Table(tblBooks).Create(schema).Error
 }
 
-func (r *Repository) FindByISBN(isbn string) (*book.Book, error) {
-	var schema BookSchema
-	err := r.db.Table(tblBooks).Where("isbn = ?", isbn).First(&schema).Error
+func (r *Repository) FindByID(id int) (*book.BookInfo, error) {
+	var row BookInfoResult
+	err := r.db.Table(tblBooks).
+		Select("books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
+		Joins("LEFT JOIN users ON books.owner_id = users.id").
+		Where("books.id = ?", id).
+		First(&row).Error
 	if err == gorm.ErrRecordNotFound {
-		return nil, nil
+		return nil, nil // No book found with the given ID
 	}
 	if err != nil {
 		return nil, err
 	}
-	return BookSchemaToDomain(&schema), nil
+
+	return &book.BookInfo{
+		ISBN:        row.ISBN,
+		Title:       row.Title,
+		Description: row.Description,
+		BriefReview: row.BriefReview,
+		Author:      row.Author,
+		Year:        row.Year,
+		Owner: book.BookOwner{
+			ID:       row.OwnerID,
+			Username: row.Username,
+		},
+	}, nil
 }
 
 func (r *Repository) Update(b *book.Book) error {
 	schema := DomainToBookSchema(b)
-	return r.db.Table(tblBooks).Where("isbn = ? AND owner_id = ?", b.ISBN, b.OwnerID).Updates(schema).Error
+	return r.db.Table(tblBooks).Where("id = ? AND owner_id = ?", b.ID, b.OwnerID).Updates(schema).Error
 }
 
-func (r *Repository) Delete(isbn string) error {
-	return r.db.Table(tblBooks).Where("isbn = ?", isbn).Delete(nil).Error
+func (r *Repository) Delete(id int) error {
+	return r.db.Table(tblBooks).Where("id = ?", id).Delete(nil).Error
 }
 
 func (r *Repository) List() ([]*book.BookInfo, error) {
-	type result struct {
-		ISBN        string
-		Title       string
-		Description string
-		BriefReview string
-		Author      string
-		Year        int
-		OwnerID     string
-		Username    string
-	}
-
-	var rows []result
+	var rows []BookInfoResult
 	err := r.db.Table(tblBooks).
 		Select("books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
 		Joins("LEFT JOIN users ON books.owner_id = users.id").
@@ -72,7 +77,7 @@ func (r *Repository) List() ([]*book.BookInfo, error) {
 			Author:      row.Author,
 			Year:        row.Year,
 			Owner: book.BookOwner{
-				OwnerID:  row.OwnerID,
+				ID:       row.OwnerID,
 				Username: row.Username,
 			},
 		})

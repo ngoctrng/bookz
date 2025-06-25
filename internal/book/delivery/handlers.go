@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/ngoctrng/bookz/internal/book"
@@ -45,9 +46,9 @@ func (h *Handler) Create(c echo.Context) error {
 }
 
 func (h *Handler) Get(c echo.Context) error {
-	isbn := c.Param("isbn")
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	b, err := h.uc.Get(isbn)
+	b, err := h.uc.Get(id)
 	if err != nil || b == nil {
 		return echo.NewHTTPError(http.StatusNotFound, "book not found")
 	}
@@ -95,10 +96,10 @@ func (h *Handler) Update(c echo.Context) error {
 }
 
 func (h *Handler) Delete(c echo.Context) error {
-	isbn := c.Param("isbn")
+	id, _ := strconv.Atoi(c.Param("id"))
 	ownerID := c.Get("user_id").(string)
 
-	if err := h.uc.Delete(isbn, ownerID); err != nil {
+	if err := h.uc.Delete(id, ownerID); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 

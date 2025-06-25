@@ -18,34 +18,34 @@ func (s *Service) Create(b *book.Book) error {
 	return s.repo.Save(b)
 }
 
-func (s *Service) Get(isbn string) (*book.Book, error) {
-	return s.repo.FindByISBN(isbn)
+func (s *Service) Get(id int) (*book.BookInfo, error) {
+	return s.repo.FindByID(id)
 }
 
 func (s *Service) Update(b *book.Book, ownerID string) error {
-	existed, err := s.repo.FindByISBN(b.ISBN)
+	existed, err := s.repo.FindByID(b.ID)
 	if err != nil {
 		return err
 	}
 
-	if existed.OwnerID != ownerID {
+	if existed.Owner.ID != ownerID {
 		return errors.New("you do not have permission to update this book")
 	}
 
 	return s.repo.Update(b)
 }
 
-func (s *Service) Delete(isbn, ownerID string) error {
-	b, err := s.repo.FindByISBN(isbn)
+func (s *Service) Delete(id int, ownerID string) error {
+	b, err := s.repo.FindByID(id)
 	if err != nil {
 		return err
 	}
 
-	if b.OwnerID != ownerID {
+	if b.Owner.ID != ownerID {
 		return errors.New("you do not have permission to delete this book")
 	}
 
-	return s.repo.Delete(isbn)
+	return s.repo.Delete(id)
 }
 
 func (s *Service) List() ([]*book.BookInfo, error) {
