@@ -4,12 +4,12 @@ go 1.24.0
 
 require (
 	github.com/getsentry/sentry-go v0.34.0
+	github.com/getsentry/sentry-go/echo v0.34.0
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/labstack/echo-jwt/v4 v4.3.1
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/lib/pq v1.10.9
 	github.com/rubenv/sql-migrate v1.8.0

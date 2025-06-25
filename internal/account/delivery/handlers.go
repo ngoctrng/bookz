@@ -43,7 +43,7 @@ func (h *Handler) Register(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	signed, err := token.Sign(uid.String(), h.cfg.TokenSecret, time.Duration(h.cfg.TokenExpiration))
+	signed, err := token.Sign(uid.String(), h.cfg.TokenSecret, 24*time.Hour)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -69,7 +69,7 @@ func (h *Handler) Login(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid email or password")
 	}
 
-	signed, err := token.Sign(user.ID.String(), h.cfg.TokenSecret, time.Duration(h.cfg.TokenExpiration))
+	signed, err := token.Sign(user.ID.String(), h.cfg.TokenSecret, 24*time.Hour)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to generate token")
 	}
