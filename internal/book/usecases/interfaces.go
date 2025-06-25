@@ -7,7 +7,7 @@ type Repository interface {
 	FindByISBN(isbn string) (*book.Book, error)
 	Update(b *book.Book) error
 	Delete(isbn string) error
-	List() ([]*book.Book, error)
+	List() ([]*book.BookInfo, error)
 }
 
 type Usecase interface {
@@ -15,5 +15,5 @@ type Usecase interface {
 	Get(isbn string) (*book.Book, error)
 	Update(b *book.Book, ownerID string) error
 	Delete(isbn, ownerID string) error
-	List() ([]*book.Book, error)
+	List() ([]*book.BookInfo, error)
 }

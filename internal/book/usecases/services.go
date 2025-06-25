@@ -48,6 +48,6 @@ func (s *Service) Delete(isbn, ownerID string) error {
 	return s.repo.Delete(isbn)
 }
 
-func (s *Service) List() ([]*book.Book, error) {
+func (s *Service) List() ([]*book.BookInfo, error) {
 	return s.repo.List()
 }

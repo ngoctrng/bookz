@@ -41,14 +41,41 @@ func (r *Repository) Delete(isbn string) error {
 	return r.db.Table(tblBooks).Where("isbn = ?", isbn).Delete(nil).Error
 }
 
-func (r *Repository) List() ([]*book.Book, error) {
-	var schemas []BookSchema
-	if err := r.db.Table(tblBooks).Find(&schemas).Error; err != nil {
+func (r *Repository) List() ([]*book.BookInfo, error) {
+	type result struct {
+		ISBN        string
+		Title       string
+		Description string
+		BriefReview string
+		Author      string
+		Year        int
+		OwnerID     string
+		Username    string
+	}
+
+	var rows []result
+	err := r.db.Table(tblBooks).
+		Select("books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
+		Joins("LEFT JOIN users ON books.owner_id = users.id").
+		Find(&rows).Error
+	if err != nil {
 		return nil, err
 	}
-	var books []*book.Book
-	for _, s := range schemas {
-		books = append(books, BookSchemaToDomain(&s))
+
+	infos := make([]*book.BookInfo, 0, len(rows))
+	for _, row := range rows {
+		infos = append(infos, &book.BookInfo{
+			ISBN:        row.ISBN,
+			Title:       row.Title,
+			Description: row.Description,
+			BriefReview: row.BriefReview,
+			Author:      row.Author,
+			Year:        row.Year,
+			Owner: book.BookOwner{
+				OwnerID:  row.OwnerID,
+				Username: row.Username,
+			},
+		})
 	}
-	return books, nil
+	return infos, nil
 }

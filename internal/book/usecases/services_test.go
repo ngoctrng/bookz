@@ -130,8 +130,9 @@ func TestDeleteBook(t *testing.T) {
 }
 
 func TestListBooks(t *testing.T) {
-	books := []*book.Book{
-		{ISBN: "1"}, {ISBN: "2"},
+	books := []*book.BookInfo{
+		{ISBN: "1", Title: "Book 1", Author: "Author 1", Year: 2021, Owner: book.BookOwner{OwnerID: "owner1"}},
+		{ISBN: "2", Title: "Book 2", Author: "Author 2", Year: 2022, Owner: book.BookOwner{OwnerID: "owner2"}},
 	}
 	r := new(mocks.MockRepository)
 	svc := usecases.NewService(r)

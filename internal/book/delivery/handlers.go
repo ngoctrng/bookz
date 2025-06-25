@@ -111,17 +111,5 @@ func (h *Handler) List(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := make([]BookResponse, 0)
-	for _, b := range books {
-		resp = append(resp, BookResponse{
-			ISBN:        b.ISBN,
-			Title:       b.Title,
-			Description: b.Description,
-			BriefReview: b.BriefReview,
-			Author:      b.Author,
-			Year:        b.Year,
-		})
-	}
-
-	return c.JSON(http.StatusOK, resp)
+	return c.JSON(http.StatusOK, books)
 }
