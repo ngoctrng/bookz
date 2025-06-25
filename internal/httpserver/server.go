@@ -15,6 +15,9 @@ import (
 	bookhttp "github.com/ngoctrng/bookz/internal/book/delivery"
 	bookrepo "github.com/ngoctrng/bookz/internal/book/repository"
 	bookusecases "github.com/ngoctrng/bookz/internal/book/usecases"
+	exchangehttp "github.com/ngoctrng/bookz/internal/exchange/delivery"
+	exchangerepo "github.com/ngoctrng/bookz/internal/exchange/repository"
+	exchangeusecases "github.com/ngoctrng/bookz/internal/exchange/usecases"
 	"github.com/ngoctrng/bookz/pkg/config"
 	"github.com/ngoctrng/bookz/pkg/token"
 	"gorm.io/gorm"
@@ -38,6 +41,7 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 
 	accountHandlers := initAccount(db, cfg)
 	bookHandlers := initBook(db)
+	exchangeHandlers := initExchange(db)
 
 	configCORS(e, cfg)
 	e.Use(middleware.Recover())
@@ -64,6 +68,9 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 	api.POST("/books", bookHandlers.Create)
 	api.PUT("/books/:id", bookHandlers.Update)
 	api.DELETE("/books/:id", bookHandlers.Delete)
+	api.POST("/exchange/proposals", exchangeHandlers.CreateProposal)
+	api.GET("/exchange/proposals/:id", exchangeHandlers.GetProposalByID)
+	api.GET("/exchange/proposals", exchangeHandlers.GetAllProposals)
 
 	return &Server{echo: e, cfg: cfg}
 }
@@ -98,6 +105,12 @@ func initBook(db *gorm.DB) *bookhttp.Handler {
 	uc := bookusecases.NewService(bRepo)
 	bHandler := bookhttp.NewHandler(uc)
 	return bHandler
+}
+
+func initExchange(db *gorm.DB) *exchangehttp.Handler {
+	exRepo := exchangerepo.New(db)
+	uc := exchangeusecases.NewProposalService(exRepo)
+	return exchangehttp.NewHandler(uc)
 }
 
 func authMiddleware(cfg *config.Config, publicRoutes [][]string) echo.MiddlewareFunc {
