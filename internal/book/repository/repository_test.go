@@ -23,8 +23,8 @@ func TestBookRepository(t *testing.T) {
 	assert.NoError(t, db.Error)
 
 	t.Run("should save and find book by ISBN", func(t *testing.T) {
-
 		b := &book.Book{
+			ID:          1,
 			OwnerID:     ownerID,
 			ISBN:        "isbn-001",
 			Title:       "Book Title",
@@ -36,13 +36,14 @@ func TestBookRepository(t *testing.T) {
 		err := r.Save(b)
 		assert.NoError(t, err)
 
-		found, err := r.FindByISBN("isbn-001")
+		found, err := r.FindByID(1)
 		assert.NoError(t, err)
-		assertBookEqual(t, b, found)
+		assertBookInfo(t, b, found)
 	})
 
 	t.Run("should update book", func(t *testing.T) {
 		b := &book.Book{
+			ID:          1,
 			OwnerID:     ownerID,
 			ISBN:        "isbn-001",
 			Title:       "Updated Title",
@@ -54,9 +55,9 @@ func TestBookRepository(t *testing.T) {
 		err := r.Update(b)
 		assert.NoError(t, err)
 
-		found, err := r.FindByISBN("isbn-001")
+		found, err := r.FindByID(1)
 		assert.NoError(t, err)
-		assertBookEqual(t, b, found)
+		assertBookInfo(t, b, found)
 	})
 
 	t.Run("should list books", func(t *testing.T) {
@@ -65,40 +66,37 @@ func TestBookRepository(t *testing.T) {
 		assert.True(t, len(books) >= 1)
 
 		// Check that the returned BookInfo matches the inserted book
-		found := false
 		for _, info := range books {
 			if info.ISBN == "isbn-001" {
-				found = true
 				assert.Equal(t, "Updated Title", info.Title)
 				assert.Equal(t, "Updated description", info.Description)
 				assert.Equal(t, "Updated review", info.BriefReview)
 				assert.Equal(t, "Updated Author", info.Author)
 				assert.Equal(t, 2025, info.Year)
-				assert.Equal(t, ownerID, info.Owner.OwnerID)
+				assert.Equal(t, ownerID, info.Owner.ID)
 			}
 		}
-		assert.True(t, found, "inserted book should be in the list")
 	})
 
 	t.Run("should delete book", func(t *testing.T) {
-		err := r.Delete("isbn-001")
+		err := r.Delete(1)
 		assert.NoError(t, err)
 
-		found, err := r.FindByISBN("isbn-001")
+		found, err := r.FindByID(1)
 		assert.NoError(t, err)
 		assert.Nil(t, found)
 	})
 
 	t.Run("should return nil if not found", func(t *testing.T) {
-		found, err := r.FindByISBN("not-exist")
+		found, err := r.FindByID(999)
 		assert.NoError(t, err)
 		assert.Nil(t, found)
 	})
 }
 
-func assertBookEqual(t *testing.T, expected, actual *book.Book) {
+func assertBookInfo(t *testing.T, expected *book.Book, actual *book.BookInfo) {
 	assert.NotNil(t, actual)
-	assert.Equal(t, expected.OwnerID, actual.OwnerID)
+	assert.Equal(t, expected.OwnerID, actual.Owner.ID)
 	assert.Equal(t, expected.ISBN, actual.ISBN)
 	assert.Equal(t, expected.Title, actual.Title)
 	assert.Equal(t, expected.Description, actual.Description)

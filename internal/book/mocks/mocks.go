@@ -37,16 +37,16 @@ func (_m *MockRepository) EXPECT() *MockRepository_Expecter {
 }
 
 // Delete provides a mock function for the type MockRepository
-func (_mock *MockRepository) Delete(isbn string) error {
-	ret := _mock.Called(isbn)
+func (_mock *MockRepository) Delete(id int) error {
+	ret := _mock.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string) error); ok {
-		r0 = returnFunc(isbn)
+	if returnFunc, ok := ret.Get(0).(func(int) error); ok {
+		r0 = returnFunc(id)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -59,16 +59,16 @@ type MockRepository_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - isbn string
-func (_e *MockRepository_Expecter) Delete(isbn interface{}) *MockRepository_Delete_Call {
-	return &MockRepository_Delete_Call{Call: _e.mock.On("Delete", isbn)}
+//   - id int
+func (_e *MockRepository_Expecter) Delete(id interface{}) *MockRepository_Delete_Call {
+	return &MockRepository_Delete_Call{Call: _e.mock.On("Delete", id)}
 }
 
-func (_c *MockRepository_Delete_Call) Run(run func(isbn string)) *MockRepository_Delete_Call {
+func (_c *MockRepository_Delete_Call) Run(run func(id int)) *MockRepository_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 int
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(int)
 		}
 		run(
 			arg0,
@@ -82,55 +82,55 @@ func (_c *MockRepository_Delete_Call) Return(err error) *MockRepository_Delete_C
 	return _c
 }
 
-func (_c *MockRepository_Delete_Call) RunAndReturn(run func(isbn string) error) *MockRepository_Delete_Call {
+func (_c *MockRepository_Delete_Call) RunAndReturn(run func(id int) error) *MockRepository_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// FindByISBN provides a mock function for the type MockRepository
-func (_mock *MockRepository) FindByISBN(isbn string) (*book.Book, error) {
-	ret := _mock.Called(isbn)
+// FindByID provides a mock function for the type MockRepository
+func (_mock *MockRepository) FindByID(id int) (*book.BookInfo, error) {
+	ret := _mock.Called(id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FindByISBN")
+		panic("no return value specified for FindByID")
 	}
 
-	var r0 *book.Book
+	var r0 *book.BookInfo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*book.Book, error)); ok {
-		return returnFunc(isbn)
+	if returnFunc, ok := ret.Get(0).(func(int) (*book.BookInfo, error)); ok {
+		return returnFunc(id)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *book.Book); ok {
-		r0 = returnFunc(isbn)
+	if returnFunc, ok := ret.Get(0).(func(int) *book.BookInfo); ok {
+		r0 = returnFunc(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*book.Book)
+			r0 = ret.Get(0).(*book.BookInfo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(isbn)
+	if returnFunc, ok := ret.Get(1).(func(int) error); ok {
+		r1 = returnFunc(id)
 	} else {
 		r1 = ret.Error(1)
 	}
 	return r0, r1
 }
 
-// MockRepository_FindByISBN_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByISBN'
-type MockRepository_FindByISBN_Call struct {
+// MockRepository_FindByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindByID'
+type MockRepository_FindByID_Call struct {
 	*mock.Call
 }
 
-// FindByISBN is a helper method to define mock.On call
-//   - isbn string
-func (_e *MockRepository_Expecter) FindByISBN(isbn interface{}) *MockRepository_FindByISBN_Call {
-	return &MockRepository_FindByISBN_Call{Call: _e.mock.On("FindByISBN", isbn)}
+// FindByID is a helper method to define mock.On call
+//   - id int
+func (_e *MockRepository_Expecter) FindByID(id interface{}) *MockRepository_FindByID_Call {
+	return &MockRepository_FindByID_Call{Call: _e.mock.On("FindByID", id)}
 }
 
-func (_c *MockRepository_FindByISBN_Call) Run(run func(isbn string)) *MockRepository_FindByISBN_Call {
+func (_c *MockRepository_FindByID_Call) Run(run func(id int)) *MockRepository_FindByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 int
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(int)
 		}
 		run(
 			arg0,
@@ -139,12 +139,12 @@ func (_c *MockRepository_FindByISBN_Call) Run(run func(isbn string)) *MockReposi
 	return _c
 }
 
-func (_c *MockRepository_FindByISBN_Call) Return(book1 *book.Book, err error) *MockRepository_FindByISBN_Call {
-	_c.Call.Return(book1, err)
+func (_c *MockRepository_FindByID_Call) Return(bookInfo *book.BookInfo, err error) *MockRepository_FindByID_Call {
+	_c.Call.Return(bookInfo, err)
 	return _c
 }
 
-func (_c *MockRepository_FindByISBN_Call) RunAndReturn(run func(isbn string) (*book.Book, error)) *MockRepository_FindByISBN_Call {
+func (_c *MockRepository_FindByID_Call) RunAndReturn(run func(id int) (*book.BookInfo, error)) *MockRepository_FindByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -385,16 +385,16 @@ func (_c *MockUsecase_Create_Call) RunAndReturn(run func(b *book.Book) error) *M
 }
 
 // Delete provides a mock function for the type MockUsecase
-func (_mock *MockUsecase) Delete(isbn string, ownerID string) error {
-	ret := _mock.Called(isbn, ownerID)
+func (_mock *MockUsecase) Delete(id int, ownerID string) error {
+	ret := _mock.Called(id, ownerID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = returnFunc(isbn, ownerID)
+	if returnFunc, ok := ret.Get(0).(func(int, string) error); ok {
+		r0 = returnFunc(id, ownerID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -407,17 +407,17 @@ type MockUsecase_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - isbn string
+//   - id int
 //   - ownerID string
-func (_e *MockUsecase_Expecter) Delete(isbn interface{}, ownerID interface{}) *MockUsecase_Delete_Call {
-	return &MockUsecase_Delete_Call{Call: _e.mock.On("Delete", isbn, ownerID)}
+func (_e *MockUsecase_Expecter) Delete(id interface{}, ownerID interface{}) *MockUsecase_Delete_Call {
+	return &MockUsecase_Delete_Call{Call: _e.mock.On("Delete", id, ownerID)}
 }
 
-func (_c *MockUsecase_Delete_Call) Run(run func(isbn string, ownerID string)) *MockUsecase_Delete_Call {
+func (_c *MockUsecase_Delete_Call) Run(run func(id int, ownerID string)) *MockUsecase_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 int
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(int)
 		}
 		var arg1 string
 		if args[1] != nil {
@@ -436,33 +436,33 @@ func (_c *MockUsecase_Delete_Call) Return(err error) *MockUsecase_Delete_Call {
 	return _c
 }
 
-func (_c *MockUsecase_Delete_Call) RunAndReturn(run func(isbn string, ownerID string) error) *MockUsecase_Delete_Call {
+func (_c *MockUsecase_Delete_Call) RunAndReturn(run func(id int, ownerID string) error) *MockUsecase_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function for the type MockUsecase
-func (_mock *MockUsecase) Get(isbn string) (*book.Book, error) {
-	ret := _mock.Called(isbn)
+func (_mock *MockUsecase) Get(id int) (*book.BookInfo, error) {
+	ret := _mock.Called(id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 *book.Book
+	var r0 *book.BookInfo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*book.Book, error)); ok {
-		return returnFunc(isbn)
+	if returnFunc, ok := ret.Get(0).(func(int) (*book.BookInfo, error)); ok {
+		return returnFunc(id)
 	}
-	if returnFunc, ok := ret.Get(0).(func(string) *book.Book); ok {
-		r0 = returnFunc(isbn)
+	if returnFunc, ok := ret.Get(0).(func(int) *book.BookInfo); ok {
+		r0 = returnFunc(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*book.Book)
+			r0 = ret.Get(0).(*book.BookInfo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(isbn)
+	if returnFunc, ok := ret.Get(1).(func(int) error); ok {
+		r1 = returnFunc(id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -475,16 +475,16 @@ type MockUsecase_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - isbn string
-func (_e *MockUsecase_Expecter) Get(isbn interface{}) *MockUsecase_Get_Call {
-	return &MockUsecase_Get_Call{Call: _e.mock.On("Get", isbn)}
+//   - id int
+func (_e *MockUsecase_Expecter) Get(id interface{}) *MockUsecase_Get_Call {
+	return &MockUsecase_Get_Call{Call: _e.mock.On("Get", id)}
 }
 
-func (_c *MockUsecase_Get_Call) Run(run func(isbn string)) *MockUsecase_Get_Call {
+func (_c *MockUsecase_Get_Call) Run(run func(id int)) *MockUsecase_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
+		var arg0 int
 		if args[0] != nil {
-			arg0 = args[0].(string)
+			arg0 = args[0].(int)
 		}
 		run(
 			arg0,
@@ -493,12 +493,12 @@ func (_c *MockUsecase_Get_Call) Run(run func(isbn string)) *MockUsecase_Get_Call
 	return _c
 }
 
-func (_c *MockUsecase_Get_Call) Return(book1 *book.Book, err error) *MockUsecase_Get_Call {
-	_c.Call.Return(book1, err)
+func (_c *MockUsecase_Get_Call) Return(bookInfo *book.BookInfo, err error) *MockUsecase_Get_Call {
+	_c.Call.Return(bookInfo, err)
 	return _c
 }
 
-func (_c *MockUsecase_Get_Call) RunAndReturn(run func(isbn string) (*book.Book, error)) *MockUsecase_Get_Call {
+func (_c *MockUsecase_Get_Call) RunAndReturn(run func(id int) (*book.BookInfo, error)) *MockUsecase_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }

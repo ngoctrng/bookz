@@ -31,7 +31,7 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 	publicRoutes := [][]string{
 		{"POST", "/api/account/register"},
 		{"POST", "/api/account/login"},
-		{"GET", "/api/books/:isbn"},
+		{"GET", "/api/books/:id"},
 		{"GET", "/api/books"},
 		{"GET", "/health"},
 	}
@@ -57,13 +57,13 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 	public := api.Group("")
 	public.POST("/account/register", accountHandlers.Register)
 	public.POST("/account/login", accountHandlers.Login)
-	public.GET("/books/:isbn", bookHandlers.Get)
+	public.GET("/books/:id", bookHandlers.Get)
 	public.GET("/books", bookHandlers.List)
 
 	// private routes
 	api.POST("/books", bookHandlers.Create)
-	api.PUT("/books/:isbn", bookHandlers.Update)
-	api.DELETE("/books/:isbn", bookHandlers.Delete)
+	api.PUT("/books/:id", bookHandlers.Update)
+	api.DELETE("/books/:id", bookHandlers.Delete)
 
 	return &Server{echo: e, cfg: cfg}
 }
