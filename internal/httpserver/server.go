@@ -29,11 +29,11 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 	e := echo.New()
 
 	publicRoutes := [][]string{
-		{"POST", "/api/account/register"},
-		{"POST", "/api/account/login"},
-		{"GET", "/api/books/:id"},
-		{"GET", "/api/books"},
-		{"GET", "/health"},
+		{http.MethodPost, "/api/account/register"},
+		{http.MethodPost, "/api/account/login"},
+		{http.MethodGet, "/api/books/:id"},
+		{http.MethodGet, "/api/books"},
+		{http.MethodGet, "/health"},
 	}
 
 	accountHandlers := initAccount(db, cfg)
@@ -104,7 +104,7 @@ func authMiddleware(cfg *config.Config, publicRoutes [][]string) echo.Middleware
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			method := c.Request().Method
-			path := c.Request().URL.Path
+			path := c.Path()
 
 			// check if the route is public
 			for _, route := range publicRoutes {

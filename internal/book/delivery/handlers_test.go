@@ -89,7 +89,7 @@ func TestDeleteBookHandler(t *testing.T) {
 	err := h.Delete(c)
 
 	assert.NoError(t, err)
-	assert.Equal(t, http.StatusNoContent, rec.Code)
+	assert.Equal(t, http.StatusOK, rec.Code)
 	uc.AssertExpectations(t)
 }
 

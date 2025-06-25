@@ -43,6 +43,7 @@ func BookSchemaToDomain(s *BookSchema) *book.Book {
 }
 
 type BookInfoResult struct {
+	ID          int
 	ISBN        string
 	Title       string
 	Description string

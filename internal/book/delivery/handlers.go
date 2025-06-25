@@ -42,7 +42,7 @@ func (h *Handler) Create(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 
 	}
-	return c.JSON(http.StatusCreated, req)
+	return c.NoContent(http.StatusCreated)
 }
 
 func (h *Handler) Get(c echo.Context) error {
@@ -53,21 +53,12 @@ func (h *Handler) Get(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "book not found")
 	}
 
-	resp := BookResponse{
-		ISBN:        b.ISBN,
-		Title:       b.Title,
-		Description: b.Description,
-		BriefReview: b.BriefReview,
-		Author:      b.Author,
-		Year:        b.Year,
-	}
-
-	return c.JSON(http.StatusOK, resp)
+	return c.JSON(http.StatusOK, b)
 }
 
 func (h *Handler) Update(c echo.Context) error {
 	ownerID := c.Get("user_id").(string)
-	isbn := c.Param("isbn")
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	var req BookRequest
 	if err := c.Bind(&req); err != nil {
@@ -79,8 +70,9 @@ func (h *Handler) Update(c echo.Context) error {
 	}
 
 	b := &book.Book{
+		ID:          id,
 		OwnerID:     ownerID,
-		ISBN:        isbn,
+		ISBN:        req.ISBN,
 		Title:       req.Title,
 		Description: req.Description,
 		BriefReview: req.BriefReview,
@@ -92,7 +84,7 @@ func (h *Handler) Update(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, req)
+	return c.NoContent(http.StatusOK)
 }
 
 func (h *Handler) Delete(c echo.Context) error {
@@ -103,7 +95,7 @@ func (h *Handler) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	return c.NoContent(http.StatusOK)
 }
 
 func (h *Handler) List(c echo.Context) error {

@@ -23,7 +23,7 @@ func (r *Repository) Save(b *book.Book) error {
 func (r *Repository) FindByID(id int) (*book.BookInfo, error) {
 	var row BookInfoResult
 	err := r.db.Table(tblBooks).
-		Select("books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
+		Select("books.id, books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
 		Joins("LEFT JOIN users ON books.owner_id = users.id").
 		Where("books.id = ?", id).
 		First(&row).Error
@@ -35,6 +35,7 @@ func (r *Repository) FindByID(id int) (*book.BookInfo, error) {
 	}
 
 	return &book.BookInfo{
+		ID:          row.ID,
 		ISBN:        row.ISBN,
 		Title:       row.Title,
 		Description: row.Description,
@@ -60,7 +61,7 @@ func (r *Repository) Delete(id int) error {
 func (r *Repository) List() ([]*book.BookInfo, error) {
 	var rows []BookInfoResult
 	err := r.db.Table(tblBooks).
-		Select("books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
+		Select("books.id, books.isbn, books.title, books.description, books.brief_review, books.author, books.year, books.owner_id, users.username").
 		Joins("LEFT JOIN users ON books.owner_id = users.id").
 		Find(&rows).Error
 	if err != nil {
@@ -70,6 +71,7 @@ func (r *Repository) List() ([]*book.BookInfo, error) {
 	infos := make([]*book.BookInfo, 0, len(rows))
 	for _, row := range rows {
 		infos = append(infos, &book.BookInfo{
+			ID:          row.ID,
 			ISBN:        row.ISBN,
 			Title:       row.Title,
 			Description: row.Description,
