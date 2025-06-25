@@ -17,9 +17,15 @@ func TestBookRepository(t *testing.T) {
 
 	r := repository.New(db)
 
+	const ownerID = "c2ee4e49-2c77-452d-9a1b-5765cea6f10e"
+	db.Raw(`INSERT INTO users (id, username, email, password) VALUES 
+		('c2ee4e49-2c77-452d-9a1b-5765cea6f10e', 'owner1', 'owner1@example.com', 'password')`)
+	assert.NoError(t, db.Error)
+
 	t.Run("should save and find book by ISBN", func(t *testing.T) {
+
 		b := &book.Book{
-			OwnerID:     "owner1",
+			OwnerID:     ownerID,
 			ISBN:        "isbn-001",
 			Title:       "Book Title",
 			Description: "A book description",
@@ -37,7 +43,7 @@ func TestBookRepository(t *testing.T) {
 
 	t.Run("should update book", func(t *testing.T) {
 		b := &book.Book{
-			OwnerID:     "owner1",
+			OwnerID:     ownerID,
 			ISBN:        "isbn-001",
 			Title:       "Updated Title",
 			Description: "Updated description",
@@ -57,6 +63,21 @@ func TestBookRepository(t *testing.T) {
 		books, err := r.List()
 		assert.NoError(t, err)
 		assert.True(t, len(books) >= 1)
+
+		// Check that the returned BookInfo matches the inserted book
+		found := false
+		for _, info := range books {
+			if info.ISBN == "isbn-001" {
+				found = true
+				assert.Equal(t, "Updated Title", info.Title)
+				assert.Equal(t, "Updated description", info.Description)
+				assert.Equal(t, "Updated review", info.BriefReview)
+				assert.Equal(t, "Updated Author", info.Author)
+				assert.Equal(t, 2025, info.Year)
+				assert.Equal(t, ownerID, info.Owner.OwnerID)
+			}
+		}
+		assert.True(t, found, "inserted book should be in the list")
 	})
 
 	t.Run("should delete book", func(t *testing.T) {

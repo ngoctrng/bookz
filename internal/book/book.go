@@ -27,3 +27,18 @@ func (b *Book) AddDescription(description string) {
 func (b *Book) AddBriefReview(review string) {
 	b.BriefReview = review
 }
+
+type BookInfo struct {
+	ISBN        string    `json:"isbn"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	BriefReview string    `json:"brief_review"`
+	Author      string    `json:"author"`
+	Year        int       `json:"year"`
+	Owner       BookOwner `json:"owner"`
+}
+
+type BookOwner struct {
+	OwnerID  string `json:"owner_id"`
+	Username string `json:"username"`
+}

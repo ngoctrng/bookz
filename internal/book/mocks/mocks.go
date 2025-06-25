@@ -150,23 +150,23 @@ func (_c *MockRepository_FindByISBN_Call) RunAndReturn(run func(isbn string) (*b
 }
 
 // List provides a mock function for the type MockRepository
-func (_mock *MockRepository) List() ([]*book.Book, error) {
+func (_mock *MockRepository) List() ([]*book.BookInfo, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*book.Book
+	var r0 []*book.BookInfo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*book.Book, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*book.BookInfo, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*book.Book); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*book.BookInfo); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*book.Book)
+			r0 = ret.Get(0).([]*book.BookInfo)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -194,12 +194,12 @@ func (_c *MockRepository_List_Call) Run(run func()) *MockRepository_List_Call {
 	return _c
 }
 
-func (_c *MockRepository_List_Call) Return(books []*book.Book, err error) *MockRepository_List_Call {
-	_c.Call.Return(books, err)
+func (_c *MockRepository_List_Call) Return(bookInfos []*book.BookInfo, err error) *MockRepository_List_Call {
+	_c.Call.Return(bookInfos, err)
 	return _c
 }
 
-func (_c *MockRepository_List_Call) RunAndReturn(run func() ([]*book.Book, error)) *MockRepository_List_Call {
+func (_c *MockRepository_List_Call) RunAndReturn(run func() ([]*book.BookInfo, error)) *MockRepository_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -504,23 +504,23 @@ func (_c *MockUsecase_Get_Call) RunAndReturn(run func(isbn string) (*book.Book, 
 }
 
 // List provides a mock function for the type MockUsecase
-func (_mock *MockUsecase) List() ([]*book.Book, error) {
+func (_mock *MockUsecase) List() ([]*book.BookInfo, error) {
 	ret := _mock.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for List")
 	}
 
-	var r0 []*book.Book
+	var r0 []*book.BookInfo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*book.Book, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func() ([]*book.BookInfo, error)); ok {
 		return returnFunc()
 	}
-	if returnFunc, ok := ret.Get(0).(func() []*book.Book); ok {
+	if returnFunc, ok := ret.Get(0).(func() []*book.BookInfo); ok {
 		r0 = returnFunc()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*book.Book)
+			r0 = ret.Get(0).([]*book.BookInfo)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func() error); ok {
@@ -548,12 +548,12 @@ func (_c *MockUsecase_List_Call) Run(run func()) *MockUsecase_List_Call {
 	return _c
 }
 
-func (_c *MockUsecase_List_Call) Return(books []*book.Book, err error) *MockUsecase_List_Call {
-	_c.Call.Return(books, err)
+func (_c *MockUsecase_List_Call) Return(bookInfos []*book.BookInfo, err error) *MockUsecase_List_Call {
+	_c.Call.Return(bookInfos, err)
 	return _c
 }
 
-func (_c *MockUsecase_List_Call) RunAndReturn(run func() ([]*book.Book, error)) *MockUsecase_List_Call {
+func (_c *MockUsecase_List_Call) RunAndReturn(run func() ([]*book.BookInfo, error)) *MockUsecase_List_Call {
 	_c.Call.Return(run)
 	return _c
 }
