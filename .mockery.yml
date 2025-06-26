@@ -19,3 +19,4 @@ packages:
     interfaces:
       Repository:
       Usecase:
+      MessageBus:

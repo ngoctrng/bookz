@@ -12,6 +12,10 @@ type Repository interface {
 	FetchRequestedBookOwner(id int) (uuid.UUID, error)
 }
 
+type MessageBus interface {
+	PublishProposalAccepted(p *exchange.Proposal) error
+}
+
 type Usecase interface {
 	CreateProposal(in CreateProposalInput) error
 	GetProposalByID(id int) (*exchange.Proposal, error)

@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hibiken/asynq"
 	"github.com/ngoctrng/bookz/internal/httpserver"
 	"github.com/ngoctrng/bookz/pkg/config"
 	"gorm.io/driver/postgres"
@@ -42,6 +43,12 @@ func main() {
 		log.Fatalf("cannot connect to database: %v", err)
 	}
 
-	server := httpserver.New(cfg, db)
+	client := asynq.NewClient(asynq.RedisClientOpt{
+		Addr:     cfg.Redis.Addr,
+		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
+	})
+
+	server := httpserver.New(cfg, db, client)
 	log.Fatal(server.Start())
 }

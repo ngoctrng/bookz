@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"log"
-
 	"github.com/google/uuid"
 	"github.com/ngoctrng/bookz/internal/exchange"
 	"gorm.io/gorm"
@@ -70,8 +68,6 @@ func (r *Repository) FetchRequestedBookOwner(id int) (uuid.UUID, error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
-
-	log.Println("AAAA", owner)
 
 	return owner.ID, nil
 }
