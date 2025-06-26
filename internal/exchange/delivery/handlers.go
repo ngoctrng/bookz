@@ -75,3 +75,19 @@ func (h *Handler) GetAllProposals(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, proposals)
 }
+
+func (h *Handler) AcceptProposal(c echo.Context) error {
+	id, _ := strconv.Atoi(c.Param("id"))
+	userID := c.Get("user_id").(string)
+
+	uid, err := uuid.Parse(userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid user_id")
+	}
+
+	if err := h.uc.AcceptProposal(id, uid); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.NoContent(http.StatusOK)
+}

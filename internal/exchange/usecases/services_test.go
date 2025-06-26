@@ -27,6 +27,7 @@ func TestCreateProposal(t *testing.T) {
 
 	t.Run("should create proposal successfully", func(t *testing.T) {
 		r.EXPECT().Save(mock.AnythingOfType("*exchange.Proposal")).Return(nil).Once()
+		r.EXPECT().FetchRequestedBookOwner(int(input.Requested)).Return(uuid.New(), nil).Once()
 		err := svc.CreateProposal(input)
 		assert.NoError(t, err)
 		r.AssertExpectations(t)
@@ -34,6 +35,7 @@ func TestCreateProposal(t *testing.T) {
 
 	t.Run("should return error if repo fails", func(t *testing.T) {
 		r.EXPECT().Save(mock.AnythingOfType("*exchange.Proposal")).Return(errors.New("db error")).Once()
+		r.EXPECT().FetchRequestedBookOwner(int(input.Requested)).Return(uuid.New(), nil).Once()
 		err := svc.CreateProposal(input)
 		assert.Error(t, err)
 		r.AssertExpectations(t)

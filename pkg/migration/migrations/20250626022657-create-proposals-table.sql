@@ -3,6 +3,7 @@
 CREATE TABLE proposals (
     id              SERIAL PRIMARY KEY,
     request_by      UUID        NOT NULL,
+    request_to      UUID        NOT NULL,
     requested_id    INTEGER     NOT NULL,
     for_exchange_id INTEGER     NOT NULL,
     message         TEXT,

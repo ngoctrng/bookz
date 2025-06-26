@@ -23,6 +23,7 @@ type Proposal struct {
 	Status        RequestStatus
 	RequestedAt   time.Time
 	RequestBy     uuid.UUID
+	RequestTo     uuid.UUID // Owner of the requested book
 }
 
 func OpenProposal(by uuid.UUID, requested BookID, forExchangeID BookID) *Proposal {
@@ -37,6 +38,10 @@ func OpenProposal(by uuid.UUID, requested BookID, forExchangeID BookID) *Proposa
 
 func (p *Proposal) AddMessage(message string) {
 	p.Message = message
+}
+
+func (p *Proposal) SendRequestTo(owner uuid.UUID) {
+	p.RequestTo = owner
 }
 
 func (p *Proposal) Accept() {

@@ -1,6 +1,7 @@
 package repository_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/uuid"
@@ -8,6 +9,7 @@ import (
 	"github.com/ngoctrng/bookz/internal/exchange/repository"
 	"github.com/ngoctrng/bookz/pkg/testutil"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestExchangeRepository(t *testing.T) {
@@ -64,6 +66,24 @@ func TestExchangeRepository(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Nil(t, found)
 	})
+
+	t.Run("should fetch requested book owner", func(t *testing.T) {
+		requestBy := uuid.New()
+		requestedID := 1
+
+		givenBookInRepository(t, db, requestedID, requestBy)
+
+		ownerID, err := r.FetchRequestedBookOwner(requestedID)
+
+		assert.NoError(t, err)
+		assert.Equal(t, requestBy, ownerID)
+	})
+
+	t.Run("should return nil uuid if not found", func(t *testing.T) {
+		ownerID, err := r.FetchRequestedBookOwner(-1)
+		assert.NoError(t, err)
+		assert.Equal(t, uuid.Nil, ownerID)
+	})
 }
 
 func assertProposalEqual(t *testing.T, expected, actual *exchange.Proposal) {
@@ -74,4 +94,17 @@ func assertProposalEqual(t *testing.T, expected, actual *exchange.Proposal) {
 	assert.Equal(t, expected.ForExchangeID, actual.ForExchangeID)
 	assert.Equal(t, expected.Message, actual.Message)
 	assert.Equal(t, expected.Status, actual.Status)
+}
+
+func givenBookInRepository(t *testing.T, db *gorm.DB, bookID int, ownerID uuid.UUID) {
+	t.Helper()
+
+	sql := fmt.Sprintf(`
+		INSERT INTO books (id, isbn, owner_id, title, author) 
+		VALUES (%d, '9780143127741', '%s', 'The Martian', 'Andy Weir')`, bookID, ownerID.String())
+
+	inserted := db.Exec(sql)
+
+	assert.NoError(t, inserted.Error, "should insert book into repository")
+	assert.Equal(t, inserted.RowsAffected, int64(1))
 }

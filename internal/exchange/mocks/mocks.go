@@ -38,6 +38,68 @@ func (_m *MockRepository) EXPECT() *MockRepository_Expecter {
 	return &MockRepository_Expecter{mock: &_m.Mock}
 }
 
+// FetchRequestedBookOwner provides a mock function for the type MockRepository
+func (_mock *MockRepository) FetchRequestedBookOwner(id int) (uuid.UUID, error) {
+	ret := _mock.Called(id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FetchRequestedBookOwner")
+	}
+
+	var r0 uuid.UUID
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(int) (uuid.UUID, error)); ok {
+		return returnFunc(id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(int) uuid.UUID); ok {
+		r0 = returnFunc(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(uuid.UUID)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(int) error); ok {
+		r1 = returnFunc(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_FetchRequestedBookOwner_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FetchRequestedBookOwner'
+type MockRepository_FetchRequestedBookOwner_Call struct {
+	*mock.Call
+}
+
+// FetchRequestedBookOwner is a helper method to define mock.On call
+//   - id int
+func (_e *MockRepository_Expecter) FetchRequestedBookOwner(id interface{}) *MockRepository_FetchRequestedBookOwner_Call {
+	return &MockRepository_FetchRequestedBookOwner_Call{Call: _e.mock.On("FetchRequestedBookOwner", id)}
+}
+
+func (_c *MockRepository_FetchRequestedBookOwner_Call) Run(run func(id int)) *MockRepository_FetchRequestedBookOwner_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 int
+		if args[0] != nil {
+			arg0 = args[0].(int)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_FetchRequestedBookOwner_Call) Return(uUID uuid.UUID, err error) *MockRepository_FetchRequestedBookOwner_Call {
+	_c.Call.Return(uUID, err)
+	return _c
+}
+
+func (_c *MockRepository_FetchRequestedBookOwner_Call) RunAndReturn(run func(id int) (uuid.UUID, error)) *MockRepository_FetchRequestedBookOwner_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetAll provides a mock function for the type MockRepository
 func (_mock *MockRepository) GetAll(uid uuid.UUID) ([]*exchange.Proposal, error) {
 	ret := _mock.Called(uid)
@@ -238,6 +300,63 @@ type MockUsecase_Expecter struct {
 
 func (_m *MockUsecase) EXPECT() *MockUsecase_Expecter {
 	return &MockUsecase_Expecter{mock: &_m.Mock}
+}
+
+// AcceptProposal provides a mock function for the type MockUsecase
+func (_mock *MockUsecase) AcceptProposal(id int, uid uuid.UUID) error {
+	ret := _mock.Called(id, uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AcceptProposal")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(int, uuid.UUID) error); ok {
+		r0 = returnFunc(id, uid)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockUsecase_AcceptProposal_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AcceptProposal'
+type MockUsecase_AcceptProposal_Call struct {
+	*mock.Call
+}
+
+// AcceptProposal is a helper method to define mock.On call
+//   - id int
+//   - uid uuid.UUID
+func (_e *MockUsecase_Expecter) AcceptProposal(id interface{}, uid interface{}) *MockUsecase_AcceptProposal_Call {
+	return &MockUsecase_AcceptProposal_Call{Call: _e.mock.On("AcceptProposal", id, uid)}
+}
+
+func (_c *MockUsecase_AcceptProposal_Call) Run(run func(id int, uid uuid.UUID)) *MockUsecase_AcceptProposal_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 int
+		if args[0] != nil {
+			arg0 = args[0].(int)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUsecase_AcceptProposal_Call) Return(err error) *MockUsecase_AcceptProposal_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockUsecase_AcceptProposal_Call) RunAndReturn(run func(id int, uid uuid.UUID) error) *MockUsecase_AcceptProposal_Call {
+	_c.Call.Return(run)
+	return _c
 }
 
 // CreateProposal provides a mock function for the type MockUsecase
