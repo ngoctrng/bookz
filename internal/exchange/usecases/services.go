@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/ngoctrng/bookz/internal/exchange"
 )
@@ -20,6 +22,12 @@ func (s *Service) CreateProposal(in CreateProposalInput) error {
 	if in.Message != "" {
 		p.AddMessage(in.Message)
 	}
+
+	ownerID, err := s.repo.FetchRequestedBookOwner(int(in.Requested))
+	if err != nil {
+		return err
+	}
+	p.SendRequestTo(ownerID)
 
 	if err := s.repo.Save(p); err != nil {
 		return err
@@ -44,4 +52,23 @@ func (s *Service) GetAllProposals(uid uuid.UUID) ([]*exchange.Proposal, error) {
 	}
 
 	return proposals, nil
+}
+
+func (s *Service) AcceptProposal(id int, uid uuid.UUID) error {
+	proposal, err := s.repo.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	if proposal == nil {
+		return errors.New("proposal not found")
+	}
+
+	if proposal.RequestTo != uid {
+		return errors.New("unauthorized: only the book owner can accept this proposal")
+	}
+
+	proposal.Accept()
+
+	return s.repo.Save(proposal)
 }

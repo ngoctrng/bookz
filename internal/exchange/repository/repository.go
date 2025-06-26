@@ -1,12 +1,16 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/ngoctrng/bookz/internal/exchange"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const tblProposals = "proposals"
+const tblBooks = "books"
 
 type Repository struct {
 	db *gorm.DB
@@ -18,7 +22,12 @@ func New(db *gorm.DB) *Repository {
 
 func (r *Repository) Save(p *exchange.Proposal) error {
 	schema := DomainToProposalSchema(p)
-	return r.db.Table(tblProposals).Create(schema).Error
+	return r.db.Table(tblProposals).
+		Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "id"}},
+			DoUpdates: clause.Assignments(map[string]interface{}{"status": p.Status}),
+		}).
+		Save(schema).Error
 }
 
 func (r *Repository) GetByID(id int) (*exchange.Proposal, error) {
@@ -47,4 +56,22 @@ func (r *Repository) GetAll(uid uuid.UUID) ([]*exchange.Proposal, error) {
 	}
 
 	return proposals, nil
+}
+
+func (r *Repository) FetchRequestedBookOwner(id int) (uuid.UUID, error) {
+	type Owner struct {
+		ID uuid.UUID `gorm:"column:owner_id"`
+	}
+	var owner Owner
+	err := r.db.Table(tblBooks).Select("owner_id").Where("id = ?", id).First(&owner).Error
+	if err == gorm.ErrRecordNotFound {
+		return uuid.Nil, nil
+	}
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	log.Println("AAAA", owner)
+
+	return owner.ID, nil
 }

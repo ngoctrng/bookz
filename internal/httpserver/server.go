@@ -71,6 +71,7 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 	api.POST("/exchange/proposals", exchangeHandlers.CreateProposal)
 	api.GET("/exchange/proposals/:id", exchangeHandlers.GetProposalByID)
 	api.GET("/exchange/proposals", exchangeHandlers.GetAllProposals)
+	api.PUT("/exchange/proposals/:id/accept", exchangeHandlers.AcceptProposal)
 
 	return &Server{echo: e, cfg: cfg}
 }

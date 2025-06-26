@@ -11,6 +11,7 @@ import (
 type ProposalSchema struct {
 	ID            int
 	RequestBy     uuid.UUID
+	RequestTo     uuid.UUID
 	RequestedID   int
 	ForExchangeID int
 	Message       string
@@ -24,6 +25,7 @@ func DomainToProposalSchema(p *exchange.Proposal) *ProposalSchema {
 	return &ProposalSchema{
 		ID:            p.ID,
 		RequestBy:     p.RequestBy,
+		RequestTo:     p.RequestTo,
 		RequestedID:   int(p.RequestedID),
 		ForExchangeID: int(p.ForExchangeID),
 		Message:       p.Message,
@@ -36,6 +38,7 @@ func ProposalSchemaToDomain(s *ProposalSchema) *exchange.Proposal {
 	return &exchange.Proposal{
 		ID:            s.ID,
 		RequestBy:     s.RequestBy,
+		RequestTo:     s.RequestTo,
 		RequestedID:   exchange.BookID(s.RequestedID),
 		ForExchangeID: exchange.BookID(s.ForExchangeID),
 		Message:       s.Message,
