@@ -12,8 +12,34 @@ services:
     volumes:
       - bookz_db:/var/lib/postgresql
 
+  redis:
+    platform: linux/amd64
+    image: redis:7-alpine
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+    ports:
+      - '6379:6379'
+    volumes: 
+      - bookz_redis:/data
+    networks:
+      - bookz
+
+  taskui:
+    platform: linux/amd64
+    image: hibiken/asynqmon:latest
+    ports:
+      - '8089:8080'
+    environment:
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_DB=${REDIS_DB}
+    networks:
+      - bookz
+
 volumes:
   bookz_db:
+  bookz_redis:
 
 networks:
   bookz:

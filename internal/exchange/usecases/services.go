@@ -9,11 +9,13 @@ import (
 
 type Service struct {
 	repo Repository
+	bus  MessageBus
 }
 
-func NewProposalService(repo Repository) *Service {
+func NewProposalService(repo Repository, bus MessageBus) *Service {
 	return &Service{
 		repo: repo,
+		bus:  bus,
 	}
 }
 
@@ -69,6 +71,15 @@ func (s *Service) AcceptProposal(id int, uid uuid.UUID) error {
 	}
 
 	proposal.Accept()
+	err = s.repo.Save(proposal)
+	if err != nil {
+		return err
+	}
 
-	return s.repo.Save(proposal)
+	err = s.bus.PublishProposalAccepted(proposal)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

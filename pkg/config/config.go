@@ -24,6 +24,12 @@ type Config struct {
 		EnableSSL bool   `envconfig:"ENABLE_SSL"`
 	}
 
+	Redis struct {
+		Addr     string `envconfig:"REDIS_ADDR"`
+		Password string `envconfig:"REDIS_PASSWORD"`
+		DB       int    `envconfig:"REDIS_DB"`
+	}
+
 	TokenSecret     string `envconfig:"TOKEN_SECRET"`
 	TokenExpiration int    `envconfig:"TOKEN_EXPIRATION"`
 }

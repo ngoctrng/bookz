@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	sentryecho "github.com/getsentry/sentry-go/echo"
+	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	accounthttp "github.com/ngoctrng/bookz/internal/account/delivery"
@@ -16,6 +17,7 @@ import (
 	bookrepo "github.com/ngoctrng/bookz/internal/book/repository"
 	bookusecases "github.com/ngoctrng/bookz/internal/book/usecases"
 	exchangehttp "github.com/ngoctrng/bookz/internal/exchange/delivery"
+	exchangebus "github.com/ngoctrng/bookz/internal/exchange/messagebus"
 	exchangerepo "github.com/ngoctrng/bookz/internal/exchange/repository"
 	exchangeusecases "github.com/ngoctrng/bookz/internal/exchange/usecases"
 	"github.com/ngoctrng/bookz/pkg/config"
@@ -28,7 +30,7 @@ type Server struct {
 	echo *echo.Echo
 }
 
-func New(cfg *config.Config, db *gorm.DB) *Server {
+func New(cfg *config.Config, db *gorm.DB, client *asynq.Client) *Server {
 	e := echo.New()
 
 	publicRoutes := [][]string{
@@ -41,7 +43,7 @@ func New(cfg *config.Config, db *gorm.DB) *Server {
 
 	accountHandlers := initAccount(db, cfg)
 	bookHandlers := initBook(db)
-	exchangeHandlers := initExchange(db)
+	exchangeHandlers := initExchange(db, client)
 
 	configCORS(e, cfg)
 	e.Use(middleware.Recover())
@@ -95,22 +97,23 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func initAccount(db *gorm.DB, cfg *config.Config) *accounthttp.Handler {
-	aRepo := accountrepo.New(db)
-	uc := accountusecases.NewService(aRepo)
+	r := accountrepo.New(db)
+	uc := accountusecases.NewService(r)
 	aHandler := accounthttp.NewHandler(cfg, uc)
 	return aHandler
 }
 
 func initBook(db *gorm.DB) *bookhttp.Handler {
-	bRepo := bookrepo.New(db)
-	uc := bookusecases.NewService(bRepo)
+	r := bookrepo.New(db)
+	uc := bookusecases.NewService(r)
 	bHandler := bookhttp.NewHandler(uc)
 	return bHandler
 }
 
-func initExchange(db *gorm.DB) *exchangehttp.Handler {
-	exRepo := exchangerepo.New(db)
-	uc := exchangeusecases.NewProposalService(exRepo)
+func initExchange(db *gorm.DB, client *asynq.Client) *exchangehttp.Handler {
+	r := exchangerepo.New(db)
+	bus := exchangebus.New(client)
+	uc := exchangeusecases.NewProposalService(r, bus)
 	return exchangehttp.NewHandler(uc)
 }
 
