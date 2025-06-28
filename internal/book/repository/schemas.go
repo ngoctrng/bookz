@@ -7,7 +7,8 @@ import (
 )
 
 type BookSchema struct {
-	ISBN        string `gorm:"primaryKey"`
+	ID          int
+	ISBN        string
 	OwnerID     string
 	Title       string
 	Description string
@@ -32,6 +33,7 @@ func DomainToBookSchema(b *book.Book) *BookSchema {
 
 func BookSchemaToDomain(s *BookSchema) *book.Book {
 	return &book.Book{
+		ID:          s.ID,
 		ISBN:        s.ISBN,
 		OwnerID:     s.OwnerID,
 		Title:       s.Title,

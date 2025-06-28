@@ -149,6 +149,121 @@ func (_c *MockRepository_FindByID_Call) RunAndReturn(run func(id int) (*book.Boo
 	return _c
 }
 
+// GetBy provides a mock function for the type MockRepository
+func (_mock *MockRepository) GetBy(ids []int) ([]*book.Book, error) {
+	ret := _mock.Called(ids)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetBy")
+	}
+
+	var r0 []*book.Book
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func([]int) ([]*book.Book, error)); ok {
+		return returnFunc(ids)
+	}
+	if returnFunc, ok := ret.Get(0).(func([]int) []*book.Book); ok {
+		r0 = returnFunc(ids)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*book.Book)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func([]int) error); ok {
+		r1 = returnFunc(ids)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockRepository_GetBy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetBy'
+type MockRepository_GetBy_Call struct {
+	*mock.Call
+}
+
+// GetBy is a helper method to define mock.On call
+//   - ids []int
+func (_e *MockRepository_Expecter) GetBy(ids interface{}) *MockRepository_GetBy_Call {
+	return &MockRepository_GetBy_Call{Call: _e.mock.On("GetBy", ids)}
+}
+
+func (_c *MockRepository_GetBy_Call) Run(run func(ids []int)) *MockRepository_GetBy_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 []int
+		if args[0] != nil {
+			arg0 = args[0].([]int)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_GetBy_Call) Return(books []*book.Book, err error) *MockRepository_GetBy_Call {
+	_c.Call.Return(books, err)
+	return _c
+}
+
+func (_c *MockRepository_GetBy_Call) RunAndReturn(run func(ids []int) ([]*book.Book, error)) *MockRepository_GetBy_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetProposal provides a mock function for the type MockRepository
+func (_mock *MockRepository) GetProposal(pid int) *book.ProposalDetails {
+	ret := _mock.Called(pid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetProposal")
+	}
+
+	var r0 *book.ProposalDetails
+	if returnFunc, ok := ret.Get(0).(func(int) *book.ProposalDetails); ok {
+		r0 = returnFunc(pid)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*book.ProposalDetails)
+		}
+	}
+	return r0
+}
+
+// MockRepository_GetProposal_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetProposal'
+type MockRepository_GetProposal_Call struct {
+	*mock.Call
+}
+
+// GetProposal is a helper method to define mock.On call
+//   - pid int
+func (_e *MockRepository_Expecter) GetProposal(pid interface{}) *MockRepository_GetProposal_Call {
+	return &MockRepository_GetProposal_Call{Call: _e.mock.On("GetProposal", pid)}
+}
+
+func (_c *MockRepository_GetProposal_Call) Run(run func(pid int)) *MockRepository_GetProposal_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 int
+		if args[0] != nil {
+			arg0 = args[0].(int)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_GetProposal_Call) Return(proposalDetails *book.ProposalDetails) *MockRepository_GetProposal_Call {
+	_c.Call.Return(proposalDetails)
+	return _c
+}
+
+func (_c *MockRepository_GetProposal_Call) RunAndReturn(run func(pid int) *book.ProposalDetails) *MockRepository_GetProposal_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // List provides a mock function for the type MockRepository
 func (_mock *MockRepository) List() ([]*book.BookInfo, error) {
 	ret := _mock.Called()
@@ -306,6 +421,57 @@ func (_c *MockRepository_Update_Call) RunAndReturn(run func(b *book.Book) error)
 	return _c
 }
 
+// Upsert provides a mock function for the type MockRepository
+func (_mock *MockRepository) Upsert(books []*book.Book) error {
+	ret := _mock.Called(books)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Upsert")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func([]*book.Book) error); ok {
+		r0 = returnFunc(books)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockRepository_Upsert_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Upsert'
+type MockRepository_Upsert_Call struct {
+	*mock.Call
+}
+
+// Upsert is a helper method to define mock.On call
+//   - books []*book.Book
+func (_e *MockRepository_Expecter) Upsert(books interface{}) *MockRepository_Upsert_Call {
+	return &MockRepository_Upsert_Call{Call: _e.mock.On("Upsert", books)}
+}
+
+func (_c *MockRepository_Upsert_Call) Run(run func(books []*book.Book)) *MockRepository_Upsert_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 []*book.Book
+		if args[0] != nil {
+			arg0 = args[0].([]*book.Book)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_Upsert_Call) Return(err error) *MockRepository_Upsert_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockRepository_Upsert_Call) RunAndReturn(run func(books []*book.Book) error) *MockRepository_Upsert_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockUsecase creates a new instance of MockUsecase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockUsecase(t interface {
@@ -437,6 +603,57 @@ func (_c *MockUsecase_Delete_Call) Return(err error) *MockUsecase_Delete_Call {
 }
 
 func (_c *MockUsecase_Delete_Call) RunAndReturn(run func(id int, ownerID string) error) *MockUsecase_Delete_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// FulfillProposal provides a mock function for the type MockUsecase
+func (_mock *MockUsecase) FulfillProposal(pid int) error {
+	ret := _mock.Called(pid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FulfillProposal")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(int) error); ok {
+		r0 = returnFunc(pid)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockUsecase_FulfillProposal_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FulfillProposal'
+type MockUsecase_FulfillProposal_Call struct {
+	*mock.Call
+}
+
+// FulfillProposal is a helper method to define mock.On call
+//   - pid int
+func (_e *MockUsecase_Expecter) FulfillProposal(pid interface{}) *MockUsecase_FulfillProposal_Call {
+	return &MockUsecase_FulfillProposal_Call{Call: _e.mock.On("FulfillProposal", pid)}
+}
+
+func (_c *MockUsecase_FulfillProposal_Call) Run(run func(pid int)) *MockUsecase_FulfillProposal_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 int
+		if args[0] != nil {
+			arg0 = args[0].(int)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUsecase_FulfillProposal_Call) Return(err error) *MockUsecase_FulfillProposal_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockUsecase_FulfillProposal_Call) RunAndReturn(run func(pid int) error) *MockUsecase_FulfillProposal_Call {
 	_c.Call.Return(run)
 	return _c
 }

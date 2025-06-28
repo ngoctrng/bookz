@@ -43,7 +43,7 @@ func (r *Repository) GetByID(id int) (*exchange.Proposal, error) {
 
 func (r *Repository) GetAll(uid uuid.UUID) ([]*exchange.Proposal, error) {
 	var schemas []ProposalSchema
-	err := r.db.Table(tblProposals).Where("request_by = ?", uid).Find(&schemas).Error
+	err := r.db.Table(tblProposals).Where("request_by = ? OR request_to = ?", uid, uid).Find(&schemas).Error
 	if err != nil {
 		return nil, err
 	}

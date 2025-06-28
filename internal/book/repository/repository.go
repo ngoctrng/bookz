@@ -86,3 +86,51 @@ func (r *Repository) List() ([]*book.BookInfo, error) {
 	}
 	return infos, nil
 }
+
+func (r *Repository) GetProposal(pid int) *book.ProposalDetails {
+	var proposal book.ProposalDetails
+	err := r.db.Table("proposals").
+		Select("id, requested_id, for_exchange_id").
+		Where("id = ?", pid).
+		First(&proposal).Error
+	if err != nil {
+		return nil
+	}
+
+	return &proposal
+}
+
+func (r *Repository) GetBy(ids []int) ([]*book.Book, error) {
+	var schemas []BookSchema
+	err := r.db.Table(tblBooks).
+		Where("id IN ?", ids).
+		Find(&schemas).Error
+	if err != nil {
+		return nil, err
+	}
+
+	books := make([]*book.Book, 0, len(schemas))
+	for _, s := range schemas {
+		books = append(books, BookSchemaToDomain(&s))
+	}
+
+	return books, nil
+}
+
+func (r *Repository) Upsert(books []*book.Book) error {
+	r.db.Begin()
+	defer r.db.Commit()
+
+	for _, b := range books {
+		schema := DomainToBookSchema(b)
+		err := r.db.Table(tblBooks).
+			Where("id = ?", b.ID).
+			Updates(schema).Error
+		if err != nil {
+			r.db.Rollback()
+			return err
+		}
+	}
+
+	return nil
+}
