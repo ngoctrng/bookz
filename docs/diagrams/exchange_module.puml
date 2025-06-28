@@ -1,0 +1,20 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+Container_Boundary(exchange, "Exchange Module") {
+    Component(delivery, "Delivery (Handlers)", "Echo HTTP Handlers", "Handles HTTP requests and responses for exchange operations.")
+    Component(usecase, "Usecase", "Business Logic", "Implements exchange workflows: create, accept, list proposals.")
+    Component(repository, "Repository", "GORM/DB", "Persists and retrieves proposals from the database.")
+    Component(messagebus, "Message Bus", "asynq/Redis", "Publishes events for background processing.")
+    Component(domain, "Domain", "Go Structs", "Core business entities and logic (e.g., Proposal).")
+}
+
+Rel(user, delivery, "Sends HTTP requests")
+Rel(delivery, usecase, "Invokes")
+Rel(usecase, repository, "Reads/writes proposals")
+Rel(usecase, messagebus, "Emits events")
+Rel(usecase, domain, "Uses domain entities")
+Rel(repository, domain, "Maps to/from domain entities")
+Rel(messagebus, domain, "Serializes domain events")
+
+@enduml
