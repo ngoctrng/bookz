@@ -1,0 +1,27 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Bookz System - C4 Container Diagram
+
+Person(user, "User", "A person who uses the Bookz web/mobile app to trade books.")
+
+System_Boundary(bookz, "Bookz System") {
+    Container(api, "HTTP API Server", "Go (Echo)", "Handles HTTP requests, authentication, and business logic for accounts, books, and exchanges.")
+    Container(worker, "Background Worker", "Go (asynq)", "Processes background jobs such as fulfilling proposals and sending notifications.")
+    ContainerDb(db, "PostgreSQL Database", "PostgreSQL", "Stores users, books, proposals, and related data.")
+    Container(redis, "Redis", "Redis", "Queues background jobs and events (asynq).")
+}
+
+Container_Ext(email, "Email Service", "SMTP/External", "Sends notification emails to users.")
+
+Rel(user, api, "Uses", "HTTPS/JSON")
+Rel(api, db, "Reads from and writes to", "SQL")
+Rel(api, redis, "Enqueues background jobs", "asynq/Redis protocol")
+Rel(api, email, "Sends notification emails")
+Rel(api, worker, "Dispatches background tasks to")
+Rel(worker, redis, "Consumes jobs from", "asynq/Redis protocol")
+Rel(worker, db, "Reads from and writes to", "SQL")
+Rel(worker, email, "Sends notification emails")
+
+SHOW_LEGEND()
+@enduml

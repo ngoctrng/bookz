@@ -1,0 +1,18 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Bookz System - C4 System Context Diagram
+
+Person(user, "User", "A person who uses the Bookz web application to trade books.")
+System(bookz, "Bookz System", "A platform for managing user accounts, books, and book trading proposals.")
+System(postgres, "PostgreSQL Database", "Stores users, books, proposals, and related data.")
+System(redis, "Redis", "Used for background task queueing (asynq).")
+System_Ext(email, "Email Service", "Sends notifications to users (e.g., proposal accepted).")
+
+Rel(user, bookz, "Uses via web/mobile interface")
+Rel(bookz, postgres, "Reads from and writes to", "JDBC/SQL")
+Rel(bookz, redis, "Queues and processes background jobs", "asynq/Redis protocol")
+Rel(bookz, email, "Sends notification emails")
+
+SHOW_LEGEND()
+@enduml

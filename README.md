@@ -19,7 +19,8 @@ The FCC Book Trading Club is a backend system designed to manage a community-dri
 │   └── account/           # User account domain module
 │       ├── delivery/      # HTTP handlers
 │       ├── repository/    # Database implementations
-│       └── usecases/      # Business logic
+│       └── usecases/      # Application logic
+│       user.go            # Domain Business logic
 ├── pkg/                   # Public shared packages
 │   ├── config/            # Configuration handling
 │   ├── migration/         # Database migration utilities
@@ -42,6 +43,16 @@ Key principles:
 - Outer layers contain implementation details
 - Domain entities are at the core
 - Each layer is isolated and testable
+
+## Documentation
+
+For detailed architecture, system context, container, and component diagrams, as well as further technical documentation, please refer to the [docs](docs/) folder:
+
+- [System Context Diagram](docs/diagrams/system-context.svg)
+- [Container Diagram](docs/diagrams/container.svg)
+- [Component Diagram](docs/diagrams/component.svg)
+- [Architecture Details](docs/architecture.md)
+- [OpenAPI Specification](docs/openapi.yaml) (if available)
 
 ## Prerequisites
 

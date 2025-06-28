@@ -1,0 +1,42 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Bookz System - C4 Component Diagram
+
+Person(user, "User", "A person who uses the Bookz web/mobile app to trade books.")
+
+System_Boundary(bookz, "Bookz System") {
+    Container(api, "HTTP API Server", "Go (Echo)", "Handles HTTP requests, authentication, and business logic for accounts, books, and exchanges.")
+
+    Component(accountHandler, "Account Handler", "Go", "Handles user registration, login, and authentication.")
+    Component(bookHandler, "Book Handler", "Go", "Handles book CRUD operations and book listing.")
+    Component(exchangeHandler, "Exchange Handler", "Go", "Handles book trade proposals and exchange logic.")
+    Component(usecase, "Usecase Layer", "Go", "Business logic for accounts, books, and exchanges. Emits events to the message bus.")
+    Component(messageBus, "Message Bus", "Go (asynq)", "Publishes events to Redis queue for background processing.")
+    Component(repository, "Repository Layer", "Go (GORM)", "Data access for users, books, and proposals.")
+    Component(backgroundWorker, "Background Worker", "Go (asynq)", "Processes background jobs such as fulfilling proposals and sending notifications.")
+
+    ContainerDb(db, "PostgreSQL Database", "PostgreSQL", "Stores users, books, proposals, and related data.")
+    Container(redis, "Redis", "Redis", "Queues background jobs and events (asynq).")
+}
+
+Container_Ext(email, "Email Service", "SMTP/External", "Sends notification emails to users.")
+
+Rel(user, api, "Uses", "HTTPS/JSON")
+Rel(api, accountHandler, "Invokes")
+Rel(api, bookHandler, "Invokes")
+Rel(api, exchangeHandler, "Invokes")
+
+Rel(accountHandler, usecase, "Invokes")
+Rel(bookHandler, usecase, "Invokes")
+Rel(exchangeHandler, usecase, "Invokes")
+Rel(usecase, repository, "Uses")
+Rel(usecase, messageBus, "Emits events to")
+Rel(messageBus, redis, "Publishes events to", "asynq/Redis protocol")
+Rel(backgroundWorker, redis, "Consumes jobs from", "asynq/Redis protocol")
+Rel(backgroundWorker, db, "Reads from and writes to", "SQL")
+Rel(backgroundWorker, email, "Sends notification emails")
+Rel(repository, db, "Reads from and writes to", "SQL")
+
+SHOW_LEGEND()
+@enduml

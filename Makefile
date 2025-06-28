@@ -26,3 +26,6 @@ db/migrate:
 
 mock-gen:
 	docker run -v $(PWD):/src -w /src vektra/mockery:3
+
+diagram:
+	docker run -v $(PWD)/docs/diagrams:/work -w /work ghcr.io/plantuml/plantuml -tsvg *.puml
