@@ -156,3 +156,65 @@ func TestListBooks(t *testing.T) {
 		r.AssertExpectations(t)
 	})
 }
+
+func TestFulfillProposal(t *testing.T) {
+	mockRepo := new(mocks.MockRepository)
+	svc := usecases.NewService(mockRepo)
+
+	proposal := &book.ProposalDetails{
+		RequestedID:   1,
+		ForExchangeID: 2,
+	}
+	book1 := &book.Book{ID: 1, OwnerID: "owner1"}
+	book2 := &book.Book{ID: 2, OwnerID: "owner2"}
+
+	t.Run("should fulfill proposal successfully", func(t *testing.T) {
+		mockRepo.EXPECT().GetProposal(10).Return(proposal).Once()
+		mockRepo.EXPECT().GetBy([]int{1, 2}).Return([]*book.Book{book1, book2}, nil).Once()
+		mockRepo.EXPECT().Upsert([]*book.Book{book2, book1}).Return(nil).Once()
+
+		err := svc.FulfillProposal(10)
+		assert.NoError(t, err)
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("should return error if proposal not found", func(t *testing.T) {
+		mockRepo.EXPECT().GetProposal(11).Return(nil).Once()
+
+		err := svc.FulfillProposal(11)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "proposal not found")
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("should return error if repo.GetBy fails", func(t *testing.T) {
+		mockRepo.EXPECT().GetProposal(12).Return(proposal).Once()
+		mockRepo.EXPECT().GetBy([]int{1, 2}).Return(nil, errors.New("db error")).Once()
+
+		err := svc.FulfillProposal(12)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "db error")
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("should return error if not exactly 2 books", func(t *testing.T) {
+		mockRepo.EXPECT().GetProposal(13).Return(proposal).Once()
+		mockRepo.EXPECT().GetBy([]int{1, 2}).Return([]*book.Book{book1}, nil).Once()
+
+		err := svc.FulfillProposal(13)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "expected 2 books in exchange")
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("should return error if upsert fails", func(t *testing.T) {
+		mockRepo.EXPECT().GetProposal(14).Return(proposal).Once()
+		mockRepo.EXPECT().GetBy([]int{1, 2}).Return([]*book.Book{book1, book2}, nil).Once()
+		mockRepo.EXPECT().Upsert([]*book.Book{book2, book1}).Return(errors.New("upsert error")).Once()
+
+		err := svc.FulfillProposal(14)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "upsert error")
+		mockRepo.AssertExpectations(t)
+	})
+}

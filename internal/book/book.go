@@ -29,6 +29,18 @@ func (b *Book) AddBriefReview(review string) {
 	b.BriefReview = review
 }
 
+func (b *Book) ChangeOwner(newOwnerID string) {
+	b.OwnerID = newOwnerID
+}
+
+func ChangeOwnerFor(b1 *Book, b2 *Book) (string, string) {
+	b1Owner := b1.OwnerID
+	b2Owner := b2.OwnerID
+	b1.ChangeOwner(b2Owner)
+	b2.ChangeOwner(b1Owner)
+	return b1Owner, b2Owner
+}
+
 type BookInfo struct {
 	ID          int       `json:"id"`
 	ISBN        string    `json:"isbn"`
@@ -43,4 +55,10 @@ type BookInfo struct {
 type BookOwner struct {
 	ID       string `json:"owner_id"`
 	Username string `json:"username"`
+}
+
+type ProposalDetails struct {
+	ID            int `json:"id"`
+	RequestedID   int `json:"requested_id"`    // ID of the book wanting
+	ForExchangeID int `json:"for_exchange_id"` // ID of the book being offered in exchange
 }

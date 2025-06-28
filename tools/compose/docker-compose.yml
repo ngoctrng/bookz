@@ -25,7 +25,7 @@ services:
     networks:
       - bookz
 
-  taskui:
+  asynqmon:
     platform: linux/amd64
     image: hibiken/asynqmon:latest
     ports:

@@ -3,6 +3,9 @@
 run:
 	air -c ./tools/.air.toml
 
+worker:
+	go run ./cmd/worker/main.go
+
 test:
 	go clean -testcache
 	@(go run gotest.tools/gotestsum@latest \

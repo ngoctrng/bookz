@@ -4,8 +4,8 @@ CREATE TABLE proposals (
     id              SERIAL PRIMARY KEY,
     request_by      UUID        NOT NULL,
     request_to      UUID        NOT NULL,
-    requested_id    INTEGER     NOT NULL,
-    for_exchange_id INTEGER     NOT NULL,
+    requested_id    INTEGER     NOT NULL, -- ID of the book wanting to be exchanged
+    for_exchange_id INTEGER     NOT NULL, -- ID of the book being offered in exchange
     message         TEXT,
     status          VARCHAR(32) NOT NULL,
     requested_at    TIMESTAMPTZ NOT NULL,

@@ -54,7 +54,7 @@ func (h *Handler) GetProposalByID(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "proposal not found")
 	}
 
-	if proposal.RequestBy.String() != uid {
+	if proposal.RequestBy.String() != uid && proposal.RequestTo.String() != uid {
 		return echo.NewHTTPError(http.StatusForbidden, "you are not allowed to view this proposal")
 	}
 
