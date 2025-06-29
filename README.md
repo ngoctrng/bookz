@@ -110,7 +110,9 @@ For detailed architecture, system context, container, and component diagrams, as
     go run cmd/worker/main.go
     ```
 
-## Generating Swagger OpenAPI
+## Generating document
+
+### OpenAPI
 
 This project uses [swaggo/swag](https://github.com/swaggo/swag) for API documentation.
 
@@ -126,7 +128,17 @@ This project uses [swaggo/swag](https://github.com/swaggo/swag) for API document
     make swagger
     ```
 
-3. The generated Swagger UI and OpenAPI spec will be available in the `docs/swagger` directory.
+3. The generated Swagger UI and OpenAPI spec will be available in the `api` directory.
+
+### C4 model diagrams
+
+1. Put the file name `*.puml` in the `docs/diagrams` directory
+
+2. Generating the svg from .puml file
+
+    ```bash
+    make diagram
+    ```
 
 ## Development
 

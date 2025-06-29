@@ -1,0 +1,30 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+Deployment_Node(local, "Developer's Machine", "Linux/macOS/Windows") {
+    Deployment_Node(docker, "Docker Compose", "Docker") {
+        Deployment_Node(db_node, "PostgreSQL Container", "postgres:15-alpine3.18") {
+            ContainerDb(db, "PostgreSQL", "Stores all persistent data")
+        }
+        Deployment_Node(redis_node, "Redis Container", "redis:7-alpine") {
+            Container(redis, "Redis", "Queues background jobs and events (asynq)")
+        }
+        Deployment_Node(asynqmon_node, "Asynqmon Container", "hibiken/asynqmon") {
+            System_Ext(asynqmon, "Asynqmon", "Web UI for monitoring asynq jobs")
+        }
+    }
+    Deployment_Node(go_apps, "Go Applications", "Host Process") {
+        Container(httpserver, "HTTP API Server", "Go (Echo)", "Handles HTTP requests")
+        Container(worker, "Background Worker", "Go (asynq)", "Processes background jobs")
+        Container(migrate, "Migration Tool", "Go", "Runs DB migrations")
+    }
+}
+
+Rel(httpserver, db, "GORM/SQL")
+Rel(httpserver, redis, "asynq/Redis protocol")
+Rel(worker, db, "GORM/SQL")
+Rel(worker, redis, "asynq/Redis protocol")
+Rel(asynqmon, redis, "Monitors jobs")
+Rel(migrate, db, "Runs migrations")
+
+@enduml

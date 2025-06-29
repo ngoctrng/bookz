@@ -45,3 +45,14 @@ The Bookz System is a backend platform that enables users to manage their accoun
 - **Redis**: Used as a queue for background jobs and events, enabling reliable asynchronous processing.
 - **Email Service**: An external system that sends notification emails to users (e.g., when a trade proposal is accepted).
 - **User**: Interacts with the system via web or mobile interface, performing actions such as managing books and initiating trades.
+
+## Deployment
+
+### Local machine
+
+![local](diagrams/local_deployment.svg)
+
+- All containers and Go applications run on the developer's local machine.
+- Docker Compose manages PostgreSQL, Redis, and Asynqmon containers.
+- Go applications (httpserver, worker, migrate) run as host processes (in development).
+- Asynqmon provides a web UI for monitoring background jobs in Redis. This is a prebuild application, there are many ways to deploy it in the production environment as a private monitoring for the worker server.
