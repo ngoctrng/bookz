@@ -1,0 +1,37 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Dynamic.puml
+
+title Exchange Flow - Accept Proposal (Dynamic Diagram)
+
+Person(user, "User")
+
+Container_Boundary(api_boundary, "HTTP API Server") {
+    Container(api, "API Server", "Echo")
+    Component(handler, "Exchange Handler", "AcceptProposal")
+    Component(usecase, "Exchange Usecase", "AcceptProposal")
+    Component(repo, "Exchange Repository", "GetByID, Save")
+    Component(bus, "Message Bus", "PublishProposalAccepted")
+}
+
+Container_Boundary(worker_boundary, "Background Worker") {
+    Container(worker, "Worker", "asynq")
+    Component(bookUsecase, "Book Usecase", "FulfillProposal")
+    Component(bookRepo, "Book Repository", "GetBy, Upsert")
+}
+
+ContainerDb(db, "PostgreSQL", "Database")
+Container(redis, "Redis (asynq)", "Queue")
+
+' Flow: Accept Proposal
+Rel(user, api, "POST /exchange/proposals/{id}/accept")
+Rel(api, handler, "Invokes AcceptProposal")
+Rel(handler, usecase, "Calls AcceptProposal")
+Rel(usecase, repo, "GetByID, Save proposal")
+Rel_R(usecase, bus, "PublishProposalAccepted event")
+Rel_R(bus, redis, "Enqueue event")
+Rel_R(redis, worker, "Delivers event")
+Rel(worker, bookUsecase, "Calls FulfillProposal")
+Rel(bookUsecase, bookRepo, "GetBy, Upsert books")
+Rel(bookRepo, db, "Reads/Writes books")
+
+@enduml

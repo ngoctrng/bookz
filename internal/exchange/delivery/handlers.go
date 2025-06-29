@@ -17,6 +17,19 @@ func NewHandler(uc usecases.Usecase) *Handler {
 	return &Handler{uc: uc}
 }
 
+// CreateProposal godoc
+// @Summary      Create a new exchange proposal
+// @Description  Propose a book exchange with another user
+// @Tags         exchange
+// @Accept       json
+// @Produce      json
+// @Param        body  body      CreateProposalRequest  true  "Proposal info"
+// @Success      201
+// @Failure      400  {object}  echo.HTTPError
+// @Failure      401  {object}  echo.HTTPError
+// @Failure      500  {object}  echo.HTTPError
+// @Security     ApiKeyAuth
+// @Router       /exchange/proposals [post]
 func (h *Handler) CreateProposal(c echo.Context) error {
 	var req CreateProposalRequest
 	if err := c.Bind(&req); err != nil {
@@ -45,6 +58,17 @@ func (h *Handler) CreateProposal(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
+// GetProposalByID godoc
+// @Summary      Get proposal by ID
+// @Description  Get details of a proposal by its ID
+// @Tags         exchange
+// @Produce      json
+// @Param        id   path      int  true  "Proposal ID"
+// @Success      200  {object}  exchange.Proposal
+// @Failure      403  {object}  echo.HTTPError
+// @Failure      404  {object}  echo.HTTPError
+// @Router       /exchange/proposals/{id} [get]
+// @Security     ApiKeyAuth
 func (h *Handler) GetProposalByID(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	uid := c.Get("user_id").(string)
@@ -61,6 +85,16 @@ func (h *Handler) GetProposalByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, proposal)
 }
 
+// GetAllProposals godoc
+// @Summary      List all proposals for the user
+// @Description  Get a list of all proposals related to the current user
+// @Tags         exchange
+// @Produce      json
+// @Success      200  {array}   exchange.Proposal
+// @Failure      401  {object}  echo.HTTPError
+// @Failure      500  {object}  echo.HTTPError
+// @Router       /exchange/proposals [get]
+// @Security     ApiKeyAuth
 func (h *Handler) GetAllProposals(c echo.Context) error {
 	userID := c.Get("user_id").(string)
 
@@ -76,6 +110,17 @@ func (h *Handler) GetAllProposals(c echo.Context) error {
 	return c.JSON(http.StatusOK, proposals)
 }
 
+// AcceptProposal godoc
+// @Summary      Accept a proposal
+// @Description  Accept a book exchange proposal
+// @Tags         exchange
+// @Produce      json
+// @Param        id   path      int  true  "Proposal ID"
+// @Success      200
+// @Failure      401  {object}  echo.HTTPError
+// @Failure      500  {object}  echo.HTTPError
+// @Router       /exchange/proposals/{id}/accept [post]
+// @Security     ApiKeyAuth
 func (h *Handler) AcceptProposal(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	userID := c.Get("user_id").(string)
