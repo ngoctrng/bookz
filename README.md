@@ -8,19 +8,24 @@ The FCC Book Trading Club is a backend system designed to manage a community-dri
 
 ## Project Structure
 
-```
+<pre>
 .
 ├── cmd/                   # Application entry points
 │   ├── httpserver/        # HTTP server executable
+│   ├── worker/            # Background worker executable
 │   └── migrate/           # Database migration tool
 ├── docs/                  # Documentation and OpenAPI specs
 │   └── architecture.png   # Architecture diagram
+│   └── diagrams/          # C4 diagrams (system-context, container, component)
 ├── internal/              # Private application code
-│   └── account/           # User account domain module
+│   ├── account/           # User account domain module
+│   ├── book/              # Book domain module
+│   ├── exchange/          # Exchange/trade domain module
+│   └── ...                # Other modules
 │       ├── delivery/      # HTTP handlers
 │       ├── repository/    # Database implementations
 │       └── usecases/      # Application logic
-│       user.go            # Domain Business logic
+│       domain-model.go            # Domain Business logic
 ├── pkg/                   # Public shared packages
 │   ├── config/            # Configuration handling
 │   ├── migration/         # Database migration utilities
@@ -29,7 +34,7 @@ The FCC Book Trading Club is a backend system designed to manage a community-dri
 │   └── testutil/          # Testing utilities
 └── tools/                 # Scripts and tools
     └── compose/           # Docker compose files
-```
+</pre>
 
 ## Architecture
 
@@ -93,21 +98,57 @@ For detailed architecture, system context, container, and component diagrams, as
     make db/migrate
     ```
 
-5. Start the server
+5. Start the HTTP server
 
     ```bash
     go run cmd/httpserver/main.go
+    ```
+
+6. Start the background worker
+
+    ```bash
+    go run cmd/worker/main.go
+    ```
+
+## Generating document
+
+### OpenAPI
+
+This project uses [swaggo/swag](https://github.com/swaggo/swag) for API documentation.
+
+1. Install swag if you haven't:
+
+    ```bash
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+
+2. Generate Swagger docs:
+
+    ```bash
+    make swagger
+    ```
+
+3. The generated Swagger UI and OpenAPI spec will be available in the `api` directory.
+
+### C4 model diagrams
+
+1. Put the file name `*.puml` in the `docs/diagrams` directory
+
+2. Generating the svg from .puml file
+
+    ```bash
+    make diagram
     ```
 
 ## Development
 
 ### Project Layout
 
-- `cmd/` - Entry points for executables
-- `internal/` - Private application code
-- `pkg/` - Public shared packages
-- `tools/` - Development and deployment tools
-- `docs/` - Documentation and OpenAPI specs
+- [cmd](http://_vscodecontentref_/0) - Entry points for executables (httpserver, worker, migrate)
+- [internal](http://_vscodecontentref_/1) - Private application code
+- [pkg](http://_vscodecontentref_/2) - Public shared packages
+- [tools](http://_vscodecontentref_/3) - Development and deployment tools
+- [docs](http://_vscodecontentref_/4) - Documentation and OpenAPI specs
 
 ### Testing
 
@@ -119,6 +160,7 @@ make test
 ### Database Migrations
 
 Create a new migration:
+
 ```bash
 sql-migrate new -env="development" your-new-migration
 ```
@@ -126,8 +168,15 @@ sql-migrate new -env="development" your-new-migration
 ### Development Tools
 
 Hot reload during development:
+
 ```bash
 make run
+```
+
+Run worker:
+
+```bash
+make worker
 ```
 
 ## Contributing
