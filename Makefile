@@ -29,3 +29,6 @@ mock-gen:
 
 diagram:
 	docker run -v $(PWD)/docs/diagrams:/work -w /work ghcr.io/plantuml/plantuml -tsvg *.puml
+
+swagger:
+	swag init --parseDependency -g httpserver/server.go -d ./internal -o ./api

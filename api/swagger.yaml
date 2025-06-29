@@ -1,0 +1,440 @@
+basePath: /api
+definitions:
+  account_delivery.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  account_delivery.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      password_confirm:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - password_confirm
+    - username
+    type: object
+  account_delivery.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  book.BookInfo:
+    properties:
+      author:
+        type: string
+      brief_review:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      isbn:
+        type: string
+      owner:
+        $ref: '#/definitions/book.BookOwner'
+      title:
+        type: string
+      year:
+        type: integer
+    type: object
+  book.BookOwner:
+    properties:
+      owner_id:
+        type: string
+      username:
+        type: string
+    type: object
+  book_delivery.BookRequest:
+    properties:
+      author:
+        type: string
+      brief_review:
+        type: string
+      description:
+        type: string
+      isbn:
+        type: string
+      title:
+        type: string
+      year:
+        type: integer
+    required:
+    - author
+    - isbn
+    - title
+    type: object
+  echo.HTTPError:
+    properties:
+      message: {}
+    type: object
+  exchange.Proposal:
+    properties:
+      forExchangeID:
+        type: integer
+      id:
+        type: integer
+      message:
+        type: string
+      requestBy:
+        type: string
+      requestTo:
+        description: Owner of the requested book
+        type: string
+      requestedAt:
+        type: string
+      requestedID:
+        type: integer
+      status:
+        $ref: '#/definitions/exchange.RequestStatus'
+    type: object
+  exchange.RequestStatus:
+    enum:
+    - REVIEWING
+    - REJECTED
+    - ACCEPTED
+    type: string
+    x-enum-varnames:
+    - RequestStatusReviewing
+    - RequestStatusRejected
+    - RequestStatusAccepted
+  exchange_delivery.CreateProposalRequest:
+    properties:
+      for_exchange_id:
+        type: integer
+      message:
+        type: string
+      requested:
+        type: integer
+    required:
+    - for_exchange_id
+    - requested
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8088
+info:
+  contact: {}
+  description: The FCC Book Trading Club is a backend system designed to manage a
+    community-driven book trading platform.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Bookz API
+  version: "1.0"
+paths:
+  /account/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: User login info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/account_delivery.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account_delivery.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Login
+      tags:
+      - account
+  /account/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User registration info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/account_delivery.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/account_delivery.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Register a new user
+      tags:
+      - account
+  /books:
+    get:
+      description: Get a list of all books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/book.BookInfo'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: List all books
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Add a new book to the user's collection
+      parameters:
+      - description: Book info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/book_delivery.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new book
+      tags:
+      - books
+  /books/{id}:
+    delete:
+      description: Delete a book by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a book
+      tags:
+      - books
+    get:
+      description: Get details of a book by its ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/book.BookInfo'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Get book by ID
+      tags:
+      - books
+    put:
+      consumes:
+      - application/json
+      description: Update details of a book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Book info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/book_delivery.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Update a book
+      tags:
+      - books
+  /exchange/proposals:
+    get:
+      description: Get a list of all proposals related to the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/exchange.Proposal'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: List all proposals for the user
+      tags:
+      - exchange
+    post:
+      consumes:
+      - application/json
+      description: Propose a book exchange with another user
+      parameters:
+      - description: Proposal info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/exchange_delivery.CreateProposalRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new exchange proposal
+      tags:
+      - exchange
+  /exchange/proposals/{id}:
+    get:
+      description: Get details of a proposal by its ID
+      parameters:
+      - description: Proposal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/exchange.Proposal'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get proposal by ID
+      tags:
+      - exchange
+  /exchange/proposals/{id}/accept:
+    post:
+      description: Accept a book exchange proposal
+      parameters:
+      - description: Proposal ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      security:
+      - ApiKeyAuth: []
+      summary: Accept a proposal
+      tags:
+      - exchange
+swagger: "2.0"

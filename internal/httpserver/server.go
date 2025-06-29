@@ -10,6 +10,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	_ "github.com/ngoctrng/bookz/api" // Import the generated docs
 	accounthttp "github.com/ngoctrng/bookz/internal/account/delivery"
 	accountrepo "github.com/ngoctrng/bookz/internal/account/repository"
 	accountusecases "github.com/ngoctrng/bookz/internal/account/usecases"
@@ -22,6 +23,7 @@ import (
 	exchangeusecases "github.com/ngoctrng/bookz/internal/exchange/usecases"
 	"github.com/ngoctrng/bookz/pkg/config"
 	"github.com/ngoctrng/bookz/pkg/token"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +32,17 @@ type Server struct {
 	echo *echo.Echo
 }
 
+// @title           Bookz API
+// @version         1.0
+// @description     The FCC Book Trading Club is a backend system designed to manage a community-driven book trading platform.
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8088
+// @BasePath  /api
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func New(cfg *config.Config, db *gorm.DB, client *asynq.Client) *Server {
 	e := echo.New()
 
@@ -39,6 +52,9 @@ func New(cfg *config.Config, db *gorm.DB, client *asynq.Client) *Server {
 		{http.MethodGet, "/api/books/:id"},
 		{http.MethodGet, "/api/books"},
 		{http.MethodGet, "/health"},
+		{http.MethodGet, "/swagger/*"},
+		{http.MethodGet, "/swagger/index.html"},
+		{http.MethodGet, "/swagger/doc.json"},
 	}
 
 	accountHandlers := initAccount(db, cfg)
@@ -53,6 +69,7 @@ func New(cfg *config.Config, db *gorm.DB, client *asynq.Client) *Server {
 	e.Use(sentryecho.New(sentryecho.Options{Repanic: true}))
 	e.Use(authMiddleware(cfg, publicRoutes))
 
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/health", func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
 	})

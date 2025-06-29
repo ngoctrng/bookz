@@ -8,6 +8,7 @@ The Bookz System is a backend platform that enables users to manage their accoun
 - [Container](#container)
 - [Component](#components)
 - [Architecture Details](architecture.md)
+- [Flow exchange books](flow_exchange.md)
 
 ## System Context
 

@@ -22,6 +22,17 @@ func NewHandler(cfg *config.Config, uc usecases.Usecase) *Handler {
 	return &Handler{cfg: cfg, uc: uc}
 }
 
+// Register godoc
+// @Summary      Register a new user
+// @Description  Create a new user account
+// @Tags         account
+// @Accept       json
+// @Produce      json
+// @Param        body  body      RegisterRequest  true  "User registration info"
+// @Success      201   {object}  TokenResponse
+// @Failure      400   {object}  echo.HTTPError
+// @Failure      500   {object}  echo.HTTPError
+// @Router       /account/register [post]
 func (h *Handler) Register(c echo.Context) error {
 	var req RegisterRequest
 	if err := c.Bind(&req); err != nil {
@@ -53,6 +64,17 @@ func (h *Handler) Register(c echo.Context) error {
 	})
 }
 
+// Login godoc
+// @Summary      Login
+// @Description  Authenticate user and return JWT token
+// @Tags         account
+// @Accept       json
+// @Produce      json
+// @Param        body  body      LoginRequest  true  "User login info"
+// @Success      200   {object}  TokenResponse
+// @Failure      400   {object}  echo.HTTPError
+// @Failure      500   {object}  echo.HTTPError
+// @Router       /account/login [post]
 func (h *Handler) Login(c echo.Context) error {
 	var req LoginRequest
 	if err := c.Bind(&req); err != nil {
