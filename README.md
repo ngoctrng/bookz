@@ -188,3 +188,5 @@ make worker
 5. Create a new Pull Request
 
 ## License
+
+MIT
